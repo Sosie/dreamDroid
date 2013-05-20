@@ -6,27 +6,6 @@
 
 package net.reichholf.dreamdroid.fragment;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import net.reichholf.dreamdroid.R;
-import net.reichholf.dreamdroid.abstivities.MultiPaneHandler;
-import net.reichholf.dreamdroid.fragment.abs.AbstractHttpFragment;
-import net.reichholf.dreamdroid.fragment.dialogs.EpgDetailDialog;
-import net.reichholf.dreamdroid.fragment.dialogs.ActionDialog;
-import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
-import net.reichholf.dreamdroid.helpers.ImageLoader;
-import net.reichholf.dreamdroid.helpers.Statics;
-import net.reichholf.dreamdroid.helpers.enigma2.CurrentService;
-import net.reichholf.dreamdroid.helpers.enigma2.Event;
-import net.reichholf.dreamdroid.helpers.enigma2.Service;
-import net.reichholf.dreamdroid.helpers.enigma2.Timer;
-import net.reichholf.dreamdroid.helpers.enigma2.requesthandler.CurrentServiceRequestHandler;
-import net.reichholf.dreamdroid.helpers.enigma2.requesthandler.TimerAddByEventIdRequestHandler;
-import net.reichholf.dreamdroid.intents.IntentFactory;
-import net.reichholf.dreamdroid.loader.AsyncSimpleLoader;
-import net.reichholf.dreamdroid.loader.LoaderResult;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -46,6 +25,28 @@ import android.widget.TextView;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+
+import net.reichholf.dreamdroid.R;
+import net.reichholf.dreamdroid.abstivities.MultiPaneHandler;
+import net.reichholf.dreamdroid.fragment.abs.AbstractHttpFragment;
+import net.reichholf.dreamdroid.fragment.dialogs.ActionDialog;
+import net.reichholf.dreamdroid.fragment.dialogs.EpgDetailDialog;
+import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
+import net.reichholf.dreamdroid.helpers.ImageLoader;
+import net.reichholf.dreamdroid.helpers.Statics;
+import net.reichholf.dreamdroid.helpers.enigma2.CurrentService;
+import net.reichholf.dreamdroid.helpers.enigma2.Event;
+import net.reichholf.dreamdroid.helpers.enigma2.Service;
+import net.reichholf.dreamdroid.helpers.enigma2.Timer;
+import net.reichholf.dreamdroid.helpers.enigma2.requesthandler.CurrentServiceRequestHandler;
+import net.reichholf.dreamdroid.helpers.enigma2.requesthandler.TimerAddByEventIdRequestHandler;
+import net.reichholf.dreamdroid.intents.IntentFactory;
+import net.reichholf.dreamdroid.loader.AsyncSimpleLoader;
+import net.reichholf.dreamdroid.loader.LoaderResult;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Shows some information about the service currently running on TV

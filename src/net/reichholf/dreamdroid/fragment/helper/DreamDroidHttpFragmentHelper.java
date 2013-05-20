@@ -6,7 +6,16 @@
 
 package net.reichholf.dreamdroid.fragment.helper;
 
-import java.util.ArrayList;
+import android.app.SearchManager;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.view.KeyEvent;
+import android.widget.Toast;
+
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 
 import net.reichholf.dreamdroid.R;
 import net.reichholf.dreamdroid.abstivities.MultiPaneHandler;
@@ -26,16 +35,7 @@ import net.reichholf.dreamdroid.loader.LoaderResult;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
-import android.app.SearchManager;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.view.KeyEvent;
-import android.widget.Toast;
-
-import com.actionbarsherlock.app.SherlockFragmentActivity;
+import java.util.ArrayList;
 
 /**
  * @author sre
@@ -182,7 +182,7 @@ public class DreamDroidHttpFragmentHelper {
 	}
 
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		return keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || false;
+		return keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN;
 	}
 
 	public void onDestroy() {

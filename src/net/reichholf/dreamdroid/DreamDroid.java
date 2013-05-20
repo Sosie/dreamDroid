@@ -6,16 +6,6 @@
 
 package net.reichholf.dreamdroid;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
-import net.reichholf.dreamdroid.helpers.SimpleHttpClient;
-import net.reichholf.dreamdroid.helpers.enigma2.requesthandler.LocationListRequestHandler;
-import net.reichholf.dreamdroid.helpers.enigma2.requesthandler.TagListRequestHandler;
 import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
@@ -24,6 +14,17 @@ import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+
+import net.reichholf.dreamdroid.helpers.SimpleHttpClient;
+import net.reichholf.dreamdroid.helpers.enigma2.requesthandler.LocationListRequestHandler;
+import net.reichholf.dreamdroid.helpers.enigma2.requesthandler.TagListRequestHandler;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * @author sre

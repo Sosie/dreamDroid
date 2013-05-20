@@ -6,16 +6,6 @@
 
 package net.reichholf.dreamdroid.fragment;
 
-import net.reichholf.dreamdroid.R;
-import net.reichholf.dreamdroid.fragment.abs.AbstractHttpFragment;
-import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
-import net.reichholf.dreamdroid.helpers.enigma2.Signal;
-import net.reichholf.dreamdroid.helpers.enigma2.requesthandler.SignalRequestHandler;
-import net.reichholf.dreamdroid.loader.AsyncSimpleLoader;
-import net.reichholf.dreamdroid.loader.LoaderResult;
-
-import org.codeandmagic.android.gauge.GaugeView;
-
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
@@ -31,6 +21,16 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+
+import net.reichholf.dreamdroid.R;
+import net.reichholf.dreamdroid.fragment.abs.AbstractHttpFragment;
+import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
+import net.reichholf.dreamdroid.helpers.enigma2.Signal;
+import net.reichholf.dreamdroid.helpers.enigma2.requesthandler.SignalRequestHandler;
+import net.reichholf.dreamdroid.loader.AsyncSimpleLoader;
+import net.reichholf.dreamdroid.loader.LoaderResult;
+
+import org.codeandmagic.android.gauge.GaugeView;
 
 public class SignalFragment extends AbstractHttpFragment {
 	private static final String TAG = SignalFragment.class.getSimpleName();

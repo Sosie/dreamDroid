@@ -6,26 +6,6 @@
 
 package net.reichholf.dreamdroid.activities;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-
-import net.reichholf.dreamdroid.DreamDroid;
-import net.reichholf.dreamdroid.Profile;
-import net.reichholf.dreamdroid.ProfileChangedListener;
-import net.reichholf.dreamdroid.R;
-import net.reichholf.dreamdroid.abstivities.MultiPaneHandler;
-import net.reichholf.dreamdroid.fragment.ActivityCallbackHandler;
-import net.reichholf.dreamdroid.fragment.EpgSearchFragment;
-import net.reichholf.dreamdroid.fragment.NavigationFragment;
-import net.reichholf.dreamdroid.fragment.dialogs.ActionDialog;
-import net.reichholf.dreamdroid.fragment.dialogs.MultiChoiceDialog;
-import net.reichholf.dreamdroid.fragment.dialogs.PositiveNegativeDialog;
-import net.reichholf.dreamdroid.fragment.dialogs.SendMessageDialog;
-import net.reichholf.dreamdroid.fragment.dialogs.SleepTimerDialog;
-import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
-import net.reichholf.dreamdroid.helpers.Statics;
-import net.reichholf.dreamdroid.helpers.enigma2.CheckProfile;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -44,6 +24,27 @@ import android.widget.TextView;
 import com.actionbarsherlock.view.MenuItem;
 import com.slidingmenu.lib.SlidingMenu;
 import com.slidingmenu.lib.app.SlidingFragmentActivity;
+
+import net.reichholf.dreamdroid.DreamDroid;
+import net.reichholf.dreamdroid.Profile;
+import net.reichholf.dreamdroid.ProfileChangedListener;
+import net.reichholf.dreamdroid.R;
+import net.reichholf.dreamdroid.abstivities.MultiPaneHandler;
+import net.reichholf.dreamdroid.fragment.ActivityCallbackHandler;
+import net.reichholf.dreamdroid.fragment.EpgSearchFragment;
+import net.reichholf.dreamdroid.fragment.NavigationFragment;
+import net.reichholf.dreamdroid.fragment.dialogs.ActionDialog;
+import net.reichholf.dreamdroid.fragment.dialogs.MultiChoiceDialog;
+import net.reichholf.dreamdroid.fragment.dialogs.PositiveNegativeDialog;
+import net.reichholf.dreamdroid.fragment.dialogs.SendMessageDialog;
+import net.reichholf.dreamdroid.fragment.dialogs.SleepTimerDialog;
+import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
+import net.reichholf.dreamdroid.helpers.Statics;
+import net.reichholf.dreamdroid.helpers.enigma2.CheckProfile;
+
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author sre

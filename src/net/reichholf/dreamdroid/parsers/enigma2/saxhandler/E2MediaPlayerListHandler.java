@@ -6,12 +6,12 @@
 
 package net.reichholf.dreamdroid.parsers.enigma2.saxhandler;
 
-import java.util.ArrayList;
-
 import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
 import net.reichholf.dreamdroid.helpers.enigma2.Mediaplayer;
 
 import org.xml.sax.Attributes;
+
+import java.util.ArrayList;
 
 public class E2MediaPlayerListHandler extends E2ListHandler {
 	protected static final String TAG_E2ROOT = "e2root";

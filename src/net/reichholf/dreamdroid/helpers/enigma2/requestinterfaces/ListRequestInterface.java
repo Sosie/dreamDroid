@@ -6,12 +6,12 @@
 
 package net.reichholf.dreamdroid.helpers.enigma2.requestinterfaces;
 
-import java.util.ArrayList;
-
 import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
 import net.reichholf.dreamdroid.helpers.SimpleHttpClient;
 
 import org.apache.http.NameValuePair;
+
+import java.util.ArrayList;
 
 /**
  * @author sre

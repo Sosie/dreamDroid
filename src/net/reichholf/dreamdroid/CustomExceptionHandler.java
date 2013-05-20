@@ -4,6 +4,13 @@
 
 package net.reichholf.dreamdroid;
 
+import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.os.Environment;
+import android.os.StatFs;
+import android.util.Log;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -12,13 +19,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.GregorianCalendar;
-
-import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.os.Environment;
-import android.os.StatFs;
-import android.util.Log;
 
 /**
  * @author sre

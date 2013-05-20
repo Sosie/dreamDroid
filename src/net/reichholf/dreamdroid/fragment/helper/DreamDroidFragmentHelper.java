@@ -6,10 +6,6 @@
 
 package net.reichholf.dreamdroid.fragment.helper;
 
-import net.reichholf.dreamdroid.R;
-import net.reichholf.dreamdroid.abstivities.MultiPaneHandler;
-import net.reichholf.dreamdroid.fragment.interfaces.MutliPaneContent;
-import net.reichholf.dreamdroid.helpers.Statics;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,6 +14,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+
+import net.reichholf.dreamdroid.R;
+import net.reichholf.dreamdroid.abstivities.MultiPaneHandler;
+import net.reichholf.dreamdroid.fragment.interfaces.MutliPaneContent;
+import net.reichholf.dreamdroid.helpers.Statics;
 
 public class DreamDroidFragmentHelper {
 	private Fragment mFragment;

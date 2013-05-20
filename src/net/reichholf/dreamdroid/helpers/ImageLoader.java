@@ -17,6 +17,15 @@
 
 package net.reichholf.dreamdroid.helpers;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
+import android.os.Handler;
+import android.widget.ImageView;
+
 import java.io.File;
 import java.io.FilterInputStream;
 import java.io.IOException;
@@ -26,16 +35,6 @@ import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.concurrent.ConcurrentHashMap;
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
-import android.os.Handler;
-import android.util.Log;
-import android.widget.ImageView;
 
 /**
  * This helper class load images from the local file system and binds those with

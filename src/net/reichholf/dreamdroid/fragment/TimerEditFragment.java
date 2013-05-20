@@ -6,32 +6,6 @@
 
 package net.reichholf.dreamdroid.fragment;
 
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-
-import net.reichholf.dreamdroid.DreamDroid;
-import net.reichholf.dreamdroid.R;
-import net.reichholf.dreamdroid.abstivities.MultiPaneHandler;
-import net.reichholf.dreamdroid.fragment.abs.AbstractHttpFragment;
-import net.reichholf.dreamdroid.fragment.dialogs.ActionDialog;
-import net.reichholf.dreamdroid.fragment.dialogs.MultiChoiceDialog;
-import net.reichholf.dreamdroid.fragment.dialogs.DateTimePickerDialog;
-import net.reichholf.dreamdroid.helpers.DateTime;
-import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
-import net.reichholf.dreamdroid.helpers.Python;
-import net.reichholf.dreamdroid.helpers.Statics;
-import net.reichholf.dreamdroid.helpers.enigma2.Service;
-import net.reichholf.dreamdroid.helpers.enigma2.SimpleResult;
-import net.reichholf.dreamdroid.helpers.enigma2.Tag;
-import net.reichholf.dreamdroid.helpers.enigma2.Timer;
-import net.reichholf.dreamdroid.helpers.enigma2.requesthandler.TimerChangeRequestHandler;
-
-import org.apache.http.NameValuePair;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -53,6 +27,32 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
+
+import net.reichholf.dreamdroid.DreamDroid;
+import net.reichholf.dreamdroid.R;
+import net.reichholf.dreamdroid.abstivities.MultiPaneHandler;
+import net.reichholf.dreamdroid.fragment.abs.AbstractHttpFragment;
+import net.reichholf.dreamdroid.fragment.dialogs.ActionDialog;
+import net.reichholf.dreamdroid.fragment.dialogs.DateTimePickerDialog;
+import net.reichholf.dreamdroid.fragment.dialogs.MultiChoiceDialog;
+import net.reichholf.dreamdroid.helpers.DateTime;
+import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
+import net.reichholf.dreamdroid.helpers.Python;
+import net.reichholf.dreamdroid.helpers.Statics;
+import net.reichholf.dreamdroid.helpers.enigma2.Service;
+import net.reichholf.dreamdroid.helpers.enigma2.SimpleResult;
+import net.reichholf.dreamdroid.helpers.enigma2.Tag;
+import net.reichholf.dreamdroid.helpers.enigma2.Timer;
+import net.reichholf.dreamdroid.helpers.enigma2.requesthandler.TimerChangeRequestHandler;
+
+import org.apache.http.NameValuePair;
+
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 
 //TODO Add Tag Support
 /**

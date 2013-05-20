@@ -6,11 +6,6 @@
 
 package net.reichholf.dreamdroid.activities;
 
-import net.reichholf.dreamdroid.DreamDroid;
-import net.reichholf.dreamdroid.R;
-import net.reichholf.dreamdroid.helpers.PiconDownloadTask;
-import net.reichholf.dreamdroid.helpers.PiconDownloadTask.DownloadProgress;
-import net.reichholf.dreamdroid.helpers.Statics;
 import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -22,6 +17,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
+
+import net.reichholf.dreamdroid.DreamDroid;
+import net.reichholf.dreamdroid.R;
+import net.reichholf.dreamdroid.helpers.PiconDownloadTask;
+import net.reichholf.dreamdroid.helpers.PiconDownloadTask.DownloadProgress;
+import net.reichholf.dreamdroid.helpers.Statics;
 
 /**
  * @author sreichholf

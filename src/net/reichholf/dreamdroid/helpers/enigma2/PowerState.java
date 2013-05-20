@@ -6,10 +6,10 @@
 
 package net.reichholf.dreamdroid.helpers.enigma2;
 
-import java.util.ArrayList;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+
+import java.util.ArrayList;
 
 
 /**

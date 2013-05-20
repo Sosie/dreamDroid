@@ -6,7 +6,12 @@
 
 package net.reichholf.dreamdroid.intents;
 
-import java.util.ArrayList;
+import android.content.ActivityNotFoundException;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.preference.PreferenceManager;
+import android.util.Log;
 
 import net.reichholf.dreamdroid.DreamDroid;
 import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
@@ -17,12 +22,7 @@ import net.reichholf.dreamdroid.helpers.enigma2.URIStore;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
-import android.content.ActivityNotFoundException;
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.preference.PreferenceManager;
-import android.util.Log;
+import java.util.ArrayList;
 
 /**
  * @author sre

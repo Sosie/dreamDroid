@@ -6,21 +6,6 @@
 
 package net.reichholf.dreamdroid.fragment;
 
-import java.util.ArrayList;
-
-import net.reichholf.dreamdroid.DreamDroid;
-import net.reichholf.dreamdroid.R;
-import net.reichholf.dreamdroid.fragment.abs.AbstractHttpFragment;
-import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
-import net.reichholf.dreamdroid.helpers.Python;
-import net.reichholf.dreamdroid.helpers.Statics;
-import net.reichholf.dreamdroid.helpers.enigma2.Remote;
-import net.reichholf.dreamdroid.helpers.enigma2.SimpleResult;
-import net.reichholf.dreamdroid.helpers.enigma2.requesthandler.RemoteCommandRequestHandler;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -37,6 +22,21 @@ import android.widget.Button;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+
+import net.reichholf.dreamdroid.DreamDroid;
+import net.reichholf.dreamdroid.R;
+import net.reichholf.dreamdroid.fragment.abs.AbstractHttpFragment;
+import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
+import net.reichholf.dreamdroid.helpers.Python;
+import net.reichholf.dreamdroid.helpers.Statics;
+import net.reichholf.dreamdroid.helpers.enigma2.Remote;
+import net.reichholf.dreamdroid.helpers.enigma2.SimpleResult;
+import net.reichholf.dreamdroid.helpers.enigma2.requesthandler.RemoteCommandRequestHandler;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
+import java.util.ArrayList;
 
 /**
  * A Virtual dreambox remote control using http-requests to send key-strokes

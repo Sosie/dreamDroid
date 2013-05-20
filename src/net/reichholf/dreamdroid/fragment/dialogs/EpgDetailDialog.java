@@ -6,12 +6,6 @@
 
 package net.reichholf.dreamdroid.fragment.dialogs;
 
-import java.util.HashMap;
-
-import net.reichholf.dreamdroid.R;
-import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
-import net.reichholf.dreamdroid.helpers.Statics;
-import net.reichholf.dreamdroid.helpers.enigma2.Event;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +13,13 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import net.reichholf.dreamdroid.R;
+import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
+import net.reichholf.dreamdroid.helpers.Statics;
+import net.reichholf.dreamdroid.helpers.enigma2.Event;
+
+import java.util.HashMap;
 
 /**
  * @author sre

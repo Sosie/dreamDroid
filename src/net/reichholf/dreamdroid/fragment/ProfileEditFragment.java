@@ -6,11 +6,6 @@
 
 package net.reichholf.dreamdroid.fragment;
 
-import net.reichholf.dreamdroid.DatabaseHelper;
-import net.reichholf.dreamdroid.Profile;
-import net.reichholf.dreamdroid.R;
-import net.reichholf.dreamdroid.fragment.abs.DreamDroidFragment;
-import net.reichholf.dreamdroid.helpers.Statics;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -28,6 +23,12 @@ import android.widget.Toast;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+
+import net.reichholf.dreamdroid.DatabaseHelper;
+import net.reichholf.dreamdroid.Profile;
+import net.reichholf.dreamdroid.R;
+import net.reichholf.dreamdroid.fragment.abs.DreamDroidFragment;
+import net.reichholf.dreamdroid.helpers.Statics;
 
 /**
  * Used to edit connection profiles

@@ -15,9 +15,6 @@
 
 package com.commonsware.cwac.merge;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.database.DataSetObserver;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +23,9 @@ import android.widget.ListAdapter;
 import android.widget.SectionIndexer;
 
 import com.commonsware.cwac.sacklist.SackOfViewsAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Adapter that merges multiple child adapters and views into a single

@@ -6,12 +6,6 @@
 
 package net.reichholf.dreamdroid.fragment.dialogs;
 
-import java.lang.reflect.Method;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
-import net.reichholf.dreamdroid.R;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.view.View;
@@ -19,6 +13,13 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
+
+import net.reichholf.dreamdroid.R;
+
+import java.lang.reflect.Method;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * @author sre

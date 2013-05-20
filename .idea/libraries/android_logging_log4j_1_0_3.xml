@@ -1,0 +1,10 @@
+component name="libraryTable">
+  <library name="android-logging-log4j-1.0.3">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../gaugeview-library/libs/android-logging-log4j-1.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../gaugeview-library/libs/log4j-1.2.16.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

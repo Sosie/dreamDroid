@@ -6,12 +6,6 @@
 
 package net.reichholf.dreamdroid.fragment.dialogs;
 
-import java.util.HashMap;
-
-import net.reichholf.dreamdroid.R;
-import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
-import net.reichholf.dreamdroid.helpers.Python;
-import net.reichholf.dreamdroid.helpers.enigma2.SleepTimer;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.view.View;
@@ -21,6 +15,13 @@ import android.widget.CheckBox;
 import android.widget.RadioGroup;
 
 import com.michaelnovakjr.numberpicker.NumberPicker;
+
+import net.reichholf.dreamdroid.R;
+import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
+import net.reichholf.dreamdroid.helpers.Python;
+import net.reichholf.dreamdroid.helpers.enigma2.SleepTimer;
+
+import java.util.HashMap;
 
 /**
  * @author sre

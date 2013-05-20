@@ -6,6 +6,10 @@
 
 package net.reichholf.dreamdroid.helpers.enigma2;
 
+import android.util.Log;
+
+import net.reichholf.dreamdroid.Profile;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -14,9 +18,6 @@ import java.util.Locale;
 
 import javax.jmdns.JmDNS;
 import javax.jmdns.ServiceInfo;
-
-import net.reichholf.dreamdroid.Profile;
-import android.util.Log;
 
 /**
  * @author sre

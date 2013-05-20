@@ -6,12 +6,13 @@
 
 package net.reichholf.dreamdroid.fragment.dialogs;
 
-import net.reichholf.dreamdroid.R;
-import net.reichholf.dreamdroid.helpers.BundleHelper;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+
+import net.reichholf.dreamdroid.R;
+import net.reichholf.dreamdroid.helpers.BundleHelper;
 
 /**
  * @author sre

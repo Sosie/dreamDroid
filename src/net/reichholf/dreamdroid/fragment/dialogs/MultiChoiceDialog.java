@@ -6,7 +6,6 @@
 
 package net.reichholf.dreamdroid.fragment.dialogs;
 
-import net.reichholf.dreamdroid.helpers.BundleHelper;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -14,6 +13,8 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+
+import net.reichholf.dreamdroid.helpers.BundleHelper;
 
 /**
  * @author sre

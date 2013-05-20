@@ -1,8 +1,5 @@
 package com.slidingmenu.lib;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -28,6 +25,9 @@ import android.widget.Scroller;
 
 import com.slidingmenu.lib.SlidingMenu.OnClosedListener;
 import com.slidingmenu.lib.SlidingMenu.OnOpenedListener;
+
+import java.util.ArrayList;
+import java.util.List;
 //import com.slidingmenu.lib.SlidingMenu.OnCloseListener;
 //import com.slidingmenu.lib.SlidingMenu.OnOpenListener;
 

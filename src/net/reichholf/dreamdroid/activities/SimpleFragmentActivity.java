@@ -6,13 +6,6 @@
 
 package net.reichholf.dreamdroid.activities;
 
-import net.reichholf.dreamdroid.DreamDroid;
-import net.reichholf.dreamdroid.R;
-import net.reichholf.dreamdroid.abstivities.MultiPaneHandler;
-import net.reichholf.dreamdroid.fragment.ActivityCallbackHandler;
-import net.reichholf.dreamdroid.fragment.EpgSearchFragment;
-import net.reichholf.dreamdroid.fragment.dialogs.ActionDialog;
-import net.reichholf.dreamdroid.fragment.dialogs.MultiChoiceDialog;
 import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -28,6 +21,14 @@ import android.view.Window;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+
+import net.reichholf.dreamdroid.DreamDroid;
+import net.reichholf.dreamdroid.R;
+import net.reichholf.dreamdroid.abstivities.MultiPaneHandler;
+import net.reichholf.dreamdroid.fragment.ActivityCallbackHandler;
+import net.reichholf.dreamdroid.fragment.EpgSearchFragment;
+import net.reichholf.dreamdroid.fragment.dialogs.ActionDialog;
+import net.reichholf.dreamdroid.fragment.dialogs.MultiChoiceDialog;
 
 /**
  * @author sre

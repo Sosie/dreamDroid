@@ -6,23 +6,6 @@
 
 package net.reichholf.dreamdroid.fragment;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.GregorianCalendar;
-
-import net.reichholf.dreamdroid.DreamDroid;
-import net.reichholf.dreamdroid.R;
-import net.reichholf.dreamdroid.fragment.abs.DreamDroidFragment;
-import net.reichholf.dreamdroid.helpers.Statics;
-import net.reichholf.dreamdroid.helpers.enigma2.URIStore;
-import net.reichholf.dreamdroid.loader.AsyncByteLoader;
-import net.reichholf.dreamdroid.loader.LoaderResult;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.MediaScannerConnection;
@@ -44,6 +27,23 @@ import android.widget.Toast;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+
+import net.reichholf.dreamdroid.DreamDroid;
+import net.reichholf.dreamdroid.R;
+import net.reichholf.dreamdroid.fragment.abs.DreamDroidFragment;
+import net.reichholf.dreamdroid.helpers.Statics;
+import net.reichholf.dreamdroid.helpers.enigma2.URIStore;
+import net.reichholf.dreamdroid.loader.AsyncByteLoader;
+import net.reichholf.dreamdroid.loader.LoaderResult;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
 
 /**
  * Allows fetching and showing the actual TV-Screen content

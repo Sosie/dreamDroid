@@ -6,14 +6,25 @@
 
 package net.reichholf.dreamdroid.fragment;
 
-import java.util.ArrayList;
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.content.Loader;
+import android.util.Log;
+import android.view.View;
+import android.widget.ListView;
+
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 
 import net.reichholf.dreamdroid.DreamDroid;
 import net.reichholf.dreamdroid.R;
 import net.reichholf.dreamdroid.adapter.TimerListAdapter;
 import net.reichholf.dreamdroid.fragment.abs.AbstractHttpListFragment;
-import net.reichholf.dreamdroid.fragment.dialogs.PositiveNegativeDialog;
 import net.reichholf.dreamdroid.fragment.dialogs.ActionDialog;
+import net.reichholf.dreamdroid.fragment.dialogs.PositiveNegativeDialog;
 import net.reichholf.dreamdroid.fragment.dialogs.SimpleChoiceDialog;
 import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
 import net.reichholf.dreamdroid.helpers.Python;
@@ -28,18 +39,7 @@ import net.reichholf.dreamdroid.loader.LoaderResult;
 
 import org.apache.http.NameValuePair;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.content.Loader;
-import android.util.Log;
-import android.view.View;
-import android.widget.ListView;
-
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
+import java.util.ArrayList;
 
 /**
  * Activity to show a List of all existing timers of the target device

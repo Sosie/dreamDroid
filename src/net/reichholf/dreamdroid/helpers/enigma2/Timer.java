@@ -6,10 +6,10 @@
 
 package net.reichholf.dreamdroid.helpers.enigma2;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
 
 import net.reichholf.dreamdroid.DreamDroid;
 import net.reichholf.dreamdroid.R;
@@ -21,10 +21,10 @@ import net.reichholf.dreamdroid.helpers.Statics;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * @author sreichholf

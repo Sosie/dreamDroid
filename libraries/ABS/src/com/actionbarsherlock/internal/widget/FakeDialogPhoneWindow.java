@@ -1,13 +1,15 @@
 package com.actionbarsherlock.internal.widget;
 
-import static android.view.View.MeasureSpec.EXACTLY;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.widget.LinearLayout;
+
 import com.actionbarsherlock.R;
+
+import static android.view.View.MeasureSpec.EXACTLY;
 
 public class FakeDialogPhoneWindow extends LinearLayout {
     final TypedValue mMinWidthMajor = new TypedValue();

@@ -6,12 +6,6 @@
 
 package net.reichholf.dreamdroid.adapter;
 
-import java.util.ArrayList;
-
-import net.reichholf.dreamdroid.DreamDroid;
-import net.reichholf.dreamdroid.R;
-import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
-import net.reichholf.dreamdroid.helpers.enigma2.Timer;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +13,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import net.reichholf.dreamdroid.DreamDroid;
+import net.reichholf.dreamdroid.R;
+import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
+import net.reichholf.dreamdroid.helpers.enigma2.Timer;
+
+import java.util.ArrayList;
 
 /**
  * @author sre

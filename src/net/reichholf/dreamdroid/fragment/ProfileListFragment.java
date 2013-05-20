@@ -6,19 +6,6 @@
 
 package net.reichholf.dreamdroid.fragment;
 
-import java.util.ArrayList;
-
-import net.reichholf.dreamdroid.DatabaseHelper;
-import net.reichholf.dreamdroid.DreamDroid;
-import net.reichholf.dreamdroid.Profile;
-import net.reichholf.dreamdroid.R;
-import net.reichholf.dreamdroid.fragment.abs.DreamDroidListFragment;
-import net.reichholf.dreamdroid.fragment.dialogs.ActionDialog;
-import net.reichholf.dreamdroid.fragment.dialogs.PositiveNegativeDialog;
-import net.reichholf.dreamdroid.fragment.dialogs.SimpleChoiceDialog;
-import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
-import net.reichholf.dreamdroid.helpers.Statics;
-import net.reichholf.dreamdroid.helpers.enigma2.DeviceDetector;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -38,6 +25,20 @@ import android.widget.Toast;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+
+import net.reichholf.dreamdroid.DatabaseHelper;
+import net.reichholf.dreamdroid.DreamDroid;
+import net.reichholf.dreamdroid.Profile;
+import net.reichholf.dreamdroid.R;
+import net.reichholf.dreamdroid.fragment.abs.DreamDroidListFragment;
+import net.reichholf.dreamdroid.fragment.dialogs.ActionDialog;
+import net.reichholf.dreamdroid.fragment.dialogs.PositiveNegativeDialog;
+import net.reichholf.dreamdroid.fragment.dialogs.SimpleChoiceDialog;
+import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
+import net.reichholf.dreamdroid.helpers.Statics;
+import net.reichholf.dreamdroid.helpers.enigma2.DeviceDetector;
+
+import java.util.ArrayList;
 
 /**
  * Shows a list of all connection profiles

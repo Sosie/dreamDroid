@@ -6,7 +6,10 @@
 
 package net.reichholf.dreamdroid.fragment;
 
-import java.util.ArrayList;
+import android.app.SearchManager;
+import android.os.Bundle;
+import android.support.v4.content.Loader;
+import android.widget.SimpleAdapter;
 
 import net.reichholf.dreamdroid.R;
 import net.reichholf.dreamdroid.fragment.abs.AbstractHttpEventListFragment;
@@ -20,10 +23,7 @@ import net.reichholf.dreamdroid.loader.LoaderResult;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
-import android.app.SearchManager;
-import android.os.Bundle;
-import android.support.v4.content.Loader;
-import android.widget.SimpleAdapter;
+import java.util.ArrayList;
 
 /**
  * @author sre

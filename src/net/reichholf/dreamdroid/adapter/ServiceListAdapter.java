@@ -6,17 +6,6 @@
 
 package net.reichholf.dreamdroid.adapter;
 
-import java.io.File;
-import java.util.ArrayList;
-
-import net.reichholf.dreamdroid.DreamDroid;
-import net.reichholf.dreamdroid.R;
-import net.reichholf.dreamdroid.helpers.DateTime;
-import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
-import net.reichholf.dreamdroid.helpers.ImageLoader;
-import net.reichholf.dreamdroid.helpers.Python;
-import net.reichholf.dreamdroid.helpers.enigma2.Event;
-import net.reichholf.dreamdroid.helpers.enigma2.Service;
 import android.content.Context;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -28,6 +17,18 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import net.reichholf.dreamdroid.DreamDroid;
+import net.reichholf.dreamdroid.R;
+import net.reichholf.dreamdroid.helpers.DateTime;
+import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
+import net.reichholf.dreamdroid.helpers.ImageLoader;
+import net.reichholf.dreamdroid.helpers.Python;
+import net.reichholf.dreamdroid.helpers.enigma2.Event;
+import net.reichholf.dreamdroid.helpers.enigma2.Service;
+
+import java.io.File;
+import java.util.ArrayList;
 
 /**
  * @author sre

@@ -7,6 +7,7 @@
 package net.reichholf.dreamdroid.fragment.interfaces;
 
 import android.os.Bundle;
+
 import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
 import net.reichholf.dreamdroid.helpers.SimpleHttpClient;
 

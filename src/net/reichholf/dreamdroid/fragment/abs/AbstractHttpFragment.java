@@ -6,18 +6,6 @@
 
 package net.reichholf.dreamdroid.fragment.abs;
 
-import java.util.ArrayList;
-
-import net.reichholf.dreamdroid.DreamDroid;
-import net.reichholf.dreamdroid.fragment.helper.DreamDroidHttpFragmentHelper;
-import net.reichholf.dreamdroid.fragment.interfaces.HttpBaseFragment;
-import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
-import net.reichholf.dreamdroid.helpers.SimpleHttpClient;
-import net.reichholf.dreamdroid.helpers.enigma2.requesthandler.SimpleResultRequestHandler;
-import net.reichholf.dreamdroid.loader.LoaderResult;
-
-import org.apache.http.NameValuePair;
-
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -29,6 +17,18 @@ import android.widget.Toast;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+
+import net.reichholf.dreamdroid.DreamDroid;
+import net.reichholf.dreamdroid.fragment.helper.DreamDroidHttpFragmentHelper;
+import net.reichholf.dreamdroid.fragment.interfaces.HttpBaseFragment;
+import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
+import net.reichholf.dreamdroid.helpers.SimpleHttpClient;
+import net.reichholf.dreamdroid.helpers.enigma2.requesthandler.SimpleResultRequestHandler;
+import net.reichholf.dreamdroid.loader.LoaderResult;
+
+import org.apache.http.NameValuePair;
+
+import java.util.ArrayList;
 
 /**
  * @author sreichholf

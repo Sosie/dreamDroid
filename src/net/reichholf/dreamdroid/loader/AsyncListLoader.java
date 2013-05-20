@@ -6,7 +6,10 @@
 
 package net.reichholf.dreamdroid.loader;
 
-import java.util.ArrayList;
+import android.content.Context;
+import android.os.Bundle;
+import android.support.v4.content.AsyncTaskLoader;
+import android.util.Log;
 
 import net.reichholf.dreamdroid.DreamDroid;
 import net.reichholf.dreamdroid.R;
@@ -16,10 +19,7 @@ import net.reichholf.dreamdroid.helpers.enigma2.requestinterfaces.ListRequestInt
 
 import org.apache.http.NameValuePair;
 
-import android.content.Context;
-import android.os.Bundle;
-import android.support.v4.content.AsyncTaskLoader;
-import android.util.Log;
+import java.util.ArrayList;
 
 /**
  * @author sre

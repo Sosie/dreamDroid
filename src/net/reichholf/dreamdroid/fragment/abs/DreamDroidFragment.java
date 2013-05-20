@@ -6,16 +6,17 @@
 
 package net.reichholf.dreamdroid.fragment.abs;
 
-import net.reichholf.dreamdroid.abstivities.MultiPaneHandler;
-import net.reichholf.dreamdroid.fragment.ActivityCallbackHandler;
-import net.reichholf.dreamdroid.fragment.helper.DreamDroidFragmentHelper;
-import net.reichholf.dreamdroid.fragment.interfaces.MutliPaneContent;
-import net.reichholf.dreamdroid.helpers.Statics;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
 import com.actionbarsherlock.app.SherlockFragment;
+
+import net.reichholf.dreamdroid.abstivities.MultiPaneHandler;
+import net.reichholf.dreamdroid.fragment.ActivityCallbackHandler;
+import net.reichholf.dreamdroid.fragment.helper.DreamDroidFragmentHelper;
+import net.reichholf.dreamdroid.fragment.interfaces.MutliPaneContent;
+import net.reichholf.dreamdroid.helpers.Statics;
 
 /**
  * @author sre

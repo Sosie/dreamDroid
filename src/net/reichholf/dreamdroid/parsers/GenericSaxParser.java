@@ -6,12 +6,7 @@
 
 package net.reichholf.dreamdroid.parsers;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
+import android.util.Log;
 
 import net.reichholf.dreamdroid.DreamDroid;
 import net.reichholf.dreamdroid.dataProviders.interfaces.DataParser;
@@ -21,7 +16,12 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
-import android.util.Log;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 /**
  * @author sreichholf

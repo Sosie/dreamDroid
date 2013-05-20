@@ -6,17 +6,18 @@
 
 package net.reichholf.dreamdroid.helpers;
 
-import it.sauronsoftware.ftp4j.FTPClient;
-import it.sauronsoftware.ftp4j.FTPFile;
+import android.os.AsyncTask;
+import android.os.Environment;
+import android.util.Log;
+
+import net.reichholf.dreamdroid.DreamDroid;
+import net.reichholf.dreamdroid.Profile;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
 
-import net.reichholf.dreamdroid.DreamDroid;
-import net.reichholf.dreamdroid.Profile;
-import android.os.AsyncTask;
-import android.os.Environment;
-import android.util.Log;
+import it.sauronsoftware.ftp4j.FTPClient;
+import it.sauronsoftware.ftp4j.FTPFile;
 
 /**
  * @author sre

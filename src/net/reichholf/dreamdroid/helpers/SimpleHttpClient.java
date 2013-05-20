@@ -6,6 +6,16 @@
 
 package net.reichholf.dreamdroid.helpers;
 
+import android.util.Log;
+
+import net.reichholf.dreamdroid.DreamDroid;
+import net.reichholf.dreamdroid.Profile;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.ByteArrayBuffer;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -26,16 +36,6 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
-
-import net.reichholf.dreamdroid.DreamDroid;
-import net.reichholf.dreamdroid.Profile;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.ByteArrayBuffer;
-
-import android.util.Log;
 
 /**
  * @author sreichholf

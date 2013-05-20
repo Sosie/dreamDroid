@@ -6,21 +6,6 @@
 
 package net.reichholf.dreamdroid.activities;
 
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Date;
-
-import net.reichholf.dreamdroid.DatabaseHelper;
-import net.reichholf.dreamdroid.Profile;
-import net.reichholf.dreamdroid.R;
-import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
-import net.reichholf.dreamdroid.helpers.SimpleHttpClient;
-import net.reichholf.dreamdroid.helpers.enigma2.URIStore;
-import net.reichholf.dreamdroid.helpers.enigma2.requesthandler.SimpleResultRequestHandler;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -33,6 +18,21 @@ import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockListActivity;
+
+import net.reichholf.dreamdroid.DatabaseHelper;
+import net.reichholf.dreamdroid.Profile;
+import net.reichholf.dreamdroid.R;
+import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
+import net.reichholf.dreamdroid.helpers.SimpleHttpClient;
+import net.reichholf.dreamdroid.helpers.enigma2.URIStore;
+import net.reichholf.dreamdroid.helpers.enigma2.requesthandler.SimpleResultRequestHandler;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * @author sre

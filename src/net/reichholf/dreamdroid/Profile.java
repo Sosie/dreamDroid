@@ -6,10 +6,10 @@
 
 package net.reichholf.dreamdroid;
 
-import java.io.Serializable;
-
 import android.database.Cursor;
 import android.util.Log;
+
+import java.io.Serializable;
 
 /**
  * @author sre

@@ -6,7 +6,16 @@
 
 package net.reichholf.dreamdroid.fragment;
 
-import java.util.ArrayList;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.content.Loader;
+import android.view.View;
+import android.widget.ListView;
+
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
 
 import net.reichholf.dreamdroid.DreamDroid;
 import net.reichholf.dreamdroid.R;
@@ -35,16 +44,7 @@ import net.reichholf.dreamdroid.loader.LoaderResult;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
-import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.content.Loader;
-import android.view.View;
-import android.widget.ListView;
-
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
+import java.util.ArrayList;
 
 /**
  * This is where all begins. It's the "main menu activity" which acts as central
