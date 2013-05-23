@@ -1,7 +1,7 @@
 <component name="CopyrightManager">
   <copyright>
-    <option name="notice" value="Copyright (c) &amp;#36;today.year. Stephan Reichholf&#10;&#10;/* © 2010 Stephan Reichholf &lt;stephan at reichholf dot net&gt;&#10; * &#10; * Unless stated otherwise in a files head all java and xml-code of this Project is:&#10; *&#10; * Licensed under the Create-Commons Attribution-Noncommercial-Share Alike 3.0 Unported&#10; * http://creativecommons.org/licenses/by-nc-sa/3.0/&#10; * &#10; * All grahpics, except the dreamdroid icon, can be used for any other non-commercial purposes.&#10; * The dreamdroid icon may not be used in any other projects than dreamdroid itself.&#10; */" />
-    <option name="keyword" value="Copyright" />
+    <option name="notice" value="Copyright © &amp;#36;today.year. Stephan Reichholf&#10;&#10;Unless stated otherwise in a files head all java and xml-code of this Project is:&#10;&#10;Licensed under the Create-Commons Attribution-Noncommercial-Share Alike 3.0 Unported&#10;http://creativecommons.org/licenses/by-nc-sa/3.0/&#10;&#10;All grahpics, except the dreamdroid icon, can be used for any other non-commercial purposes.&#10;The dreamdroid icon may not be used in any other projects than dreamdroid itself." />
+    <option name="keyword" value="©" />
     <option name="allowReplaceKeyword" value="" />
     <option name="myName" value="dreamDroid" />
     <option name="myLocal" value="true" />
