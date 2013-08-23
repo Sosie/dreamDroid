@@ -6,8 +6,25 @@
 
 package net.reichholf.dreamdroid.fragment;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.content.Loader;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBar.OnNavigationListener;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 
 import net.reichholf.dreamdroid.DreamDroid;
 import net.reichholf.dreamdroid.R;
@@ -32,25 +49,8 @@ import net.reichholf.dreamdroid.loader.LoaderResult;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.v4.content.Loader;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBar.OnNavigationListener;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Allows browsing recorded movies. Supports filtering by tags and locations
@@ -284,7 +284,7 @@ public class MovieListFragment extends AbstractHttpListFragment implements Actio
 		boolean isInsta = PreferenceManager.getDefaultSharedPreferences(getActionBarActivity()).getBoolean(
 				"instant_zap", false);
 		if ((isInsta && !isLong) || (!isInsta && isLong)) {
-			zapTo(mMovie.getString(Movie.KEY_REFERENCE));
+			zapTo(mMovie.getString(Movie.KEY_REFERENCE), mMovie.getString(Movie.KEY_SERVICE_NAME));
 		} else {
 			CharSequence[] actions = { getText(R.string.zap), getText(R.string.delete), getText(R.string.download),
 					getText(R.string.stream) };
@@ -373,7 +373,7 @@ public class MovieListFragment extends AbstractHttpListFragment implements Actio
 	public void onDialogAction(int action, Object details, String dialogTag) {
 		switch (action) {
 		case Statics.ACTION_ZAP:
-			zapTo(mMovie.getString(Movie.KEY_REFERENCE));
+			zapTo(mMovie.getString(Movie.KEY_REFERENCE), mMovie.getString(Movie.KEY_SERVICE_NAME));
 			break;
 
 		case Statics.ACTION_DELETE:

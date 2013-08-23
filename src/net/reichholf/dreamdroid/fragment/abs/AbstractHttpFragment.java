@@ -6,7 +6,16 @@
 
 package net.reichholf.dreamdroid.fragment.abs;
 
-import java.util.ArrayList;
+import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Toast;
 
 import net.reichholf.dreamdroid.DreamDroid;
 import net.reichholf.dreamdroid.fragment.helper.DreamDroidHttpFragmentHelper;
@@ -18,16 +27,7 @@ import net.reichholf.dreamdroid.loader.LoaderResult;
 
 import org.apache.http.NameValuePair;
 
-import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Toast;
+import java.util.ArrayList;
 
 /**
  * @author sreichholf
@@ -210,7 +210,7 @@ public abstract class AbstractHttpFragment extends DreamDroidFragment implements
 		mHttpHelper.onSimpleResult(success, result);
 	}
 
-	public void zapTo(String ref) {
-		mHttpHelper.zapTo(ref);
+	public void zapTo(String ref, String channelName) {
+		mHttpHelper.zapTo(ref,channelName);
 	}
 }

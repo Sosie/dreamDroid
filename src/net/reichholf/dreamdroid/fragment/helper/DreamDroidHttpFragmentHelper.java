@@ -281,9 +281,10 @@ public class DreamDroidHttpFragmentHelper {
 		toast.show();
 	}
 
-	public void zapTo(String ref) {
+	public void zapTo(String ref, String channelName) {
 		ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
 		params.add(new BasicNameValuePair("sRef", ref));
+        params.add(new BasicNameValuePair("title", channelName));
 		execSimpleResultTask(new ZapRequestHandler(), params);
 	}
 

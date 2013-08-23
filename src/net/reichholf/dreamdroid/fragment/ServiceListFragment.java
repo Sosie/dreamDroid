@@ -706,7 +706,7 @@ public class ServiceListFragment extends AbstractHttpFragment implements ActionD
 				boolean instantZap = PreferenceManager.getDefaultSharedPreferences(getActionBarActivity()).getBoolean(
 						"instant_zap", false);
 				if ((instantZap && !isLong) || (!instantZap && isLong)) {
-					zapTo(ref);
+					zapTo(ref, nam);
 				} else {
 					mCurrentService = item;
 
@@ -900,7 +900,7 @@ public class ServiceListFragment extends AbstractHttpFragment implements ActionD
 			break;
 
 		case Statics.ACTION_ZAP:
-			zapTo(ref);
+			zapTo(ref, name);
 			break;
 
 		case Statics.ACTION_STREAM:
