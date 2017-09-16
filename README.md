@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/sreichholf/dreamDroid.svg?branch=master)](https://travis-ci.org/sreichholf/dreamDroid)
 
 # LICENSE
 >© Stephan Reichholf (stephan at reichholf dot net)
@@ -20,6 +21,10 @@ dreamDroid has a fragment-based layout which is optimized for all common device 
 dreamDroid is built for use with genuine Dreamboxes and the included genuine WebInterface.
 Officially supported are the following devices:
 
+* Dreambox DM 7080 HD
+* Dreambox DM 820 HD
+* Dreambox DM 520 HD
+* Dreambox DM 525 HD
 * Dreambox DM 7020 HD
 * Dreambox DM 8000 HD PVR
 * Dreambox DM 800 HD se
@@ -30,22 +35,9 @@ Officially supported are the following devices:
 # Requirements
 
 * The target dreamboxes should be running a WebInterface with Version 1.6.8 or later.
-* dreamDroid requires at least Android 2.1 (which is the minimum SDK Version required by android-support-v7-appcompat) to work properly.
+* dreamDroid requires at least Android 4.0
 
-# Developing / building dreamDroid (with eclipse)
+# Developing / building dreamDroid with AndroidStudio
 
-Before you can build dreamDroid you usually have to import some android library projects into your eclise workspace.
-All required libraries can be found in the "libraries" folder of this git repository.
+Simply import dreamDroid as gradle project and you should be fine.
 
-## Required Libraries
-
-* android-support-v7-appcompat - Googles appcompat library (for the ActionBar)
-* numberpicker - Michael Novakjr's Numberpicker (cloned on 2012-09-08): https://github.com/mrn/numberpicker/
-* gaugeview-library - CodeAndMagic's GaugeView: https://github.com/CodeAndMagic/GaugeView
-* ckChangeLog - ckettis ckChangeLog library: https://github.com/cketti/ckChangeLog
-* PhotoView - Chris Banes PhotoView library: https://github.com/chrisbanes/PhotoView
-
-The following SDK versions have to be installed for a clean build:
-
-* API V16 (4.1.2) for android-support-v7-appcompat, gaugeview-library and PhotoView
-* API v17 (4.2.2) for ckChangelog, numberpicker and dreamDroid itself
