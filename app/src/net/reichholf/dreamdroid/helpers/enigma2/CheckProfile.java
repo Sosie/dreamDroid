@@ -128,10 +128,7 @@ public class CheckProfile {
 
 	public static int checkVersion(String version, int[] required) {
         if (version.startsWith("OWIF")){
-            version = version.replaceAll("[a-zA-Z\\s]","");
-            if (version.startsWith("0.")){
-                version = version.replaceFirst("0\\.","").concat(".2");
-            }
+				return 1;
         }
         String[] parts = version.split("\\.");
 
