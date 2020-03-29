@@ -1,6 +1,7 @@
 package net.reichholf.dreamdroid.adapter.recyclerview;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,15 +27,16 @@ public class SimpleTextAdapter extends BaseAdapter<SimpleTextAdapter.SimpleViewH
 		mKeys = keys;
 	}
 
+	@NonNull
 	@Override
-	public SimpleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+	public SimpleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 		LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 		View itemView = inflater.inflate(mLayoutId, parent, false);
 		return new SimpleViewHolder(itemView, mIds);
 	}
 
 	@Override
-	public void onBindViewHolder(SimpleViewHolder holder, int position) {
+	public void onBindViewHolder(@NonNull SimpleViewHolder holder, int position) {
 		for (int i = 0; i < mIds.length; ++i) {
 			TextView view = holder.getView(mIds[i]);
 			view.setText(mData.get(position).getString(mKeys[i]));
@@ -48,7 +50,7 @@ public class SimpleTextAdapter extends BaseAdapter<SimpleTextAdapter.SimpleViewH
 			super(itemView);
 			mViews = new HashMap<>();
 			for (int id : ids) {
-				mViews.put(id, (TextView) itemView.findViewById(id));
+				mViews.put(id, itemView.findViewById(id));
 			}
 		}
 

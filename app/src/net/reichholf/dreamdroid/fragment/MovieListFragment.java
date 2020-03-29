@@ -13,19 +13,21 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.content.Loader;
-import android.support.v7.widget.PopupMenu;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.loader.content.Loader;
+import androidx.appcompat.widget.PopupMenu;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
+
+import com.evernote.android.state.State;
 
 import net.reichholf.dreamdroid.DreamDroid;
 import net.reichholf.dreamdroid.R;
 import net.reichholf.dreamdroid.adapter.recyclerview.SimpleTextAdapter;
 import net.reichholf.dreamdroid.fragment.abs.BaseHttpRecyclerFragment;
-import net.reichholf.dreamdroid.fragment.dialogs.MovieDetailDialog;
+import net.reichholf.dreamdroid.fragment.dialogs.MovieDetailBottomSheet;
 import net.reichholf.dreamdroid.fragment.dialogs.MultiChoiceDialog;
 import net.reichholf.dreamdroid.fragment.dialogs.PositiveNegativeDialog;
 import net.reichholf.dreamdroid.fragment.dialogs.SimpleChoiceDialog;
@@ -44,7 +46,6 @@ import net.reichholf.dreamdroid.loader.AsyncListLoader;
 import net.reichholf.dreamdroid.loader.LoaderResult;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Allows browsing recorded movies. Supports filtering by tags and locations
@@ -53,14 +54,19 @@ import java.util.Arrays;
  */
 public class MovieListFragment extends BaseHttpRecyclerFragment implements MultiChoiceDialog.MultiChoiceDialogListener {
 
-	private String mCurrentLocation;
+	public static final String BUNDLE_KEY_MOVIE = "movie";
+	public static final String BUNDLE_KEY_SELECTED_TAGS = "selectedTags";
+	public static final String BUNDLE_KEY_OLD_TAGS = "oldTags";
+	public static final String BUNDLE_KEY_CURRENT_LOCATION = "currentLocation";
 
 	private boolean mTagsChanged;
 	private boolean mReloadOnSimpleResult;
-	private ArrayList<String> mSelectedTags;
-	private ArrayList<String> mOldTags;
 
-	private ExtendedHashMap mMovie;
+	@State public String mCurrentLocation;
+	@State public ArrayList<String> mSelectedTags;
+	@State public ArrayList<String> mOldTags;
+	@State public ExtendedHashMap mMovie;
+
 	private ProgressDialog mProgress;
 
 	@Override
@@ -72,21 +78,15 @@ public class MovieListFragment extends BaseHttpRecyclerFragment implements Multi
 		initTitle(getString(R.string.movies));
 
 		mCurrentLocation = "/media/hdd/movie/";
-
+		mReload = true;
 		if (savedInstanceState == null) {
 			mSelectedTags = new ArrayList<>();
 			mOldTags = new ArrayList<>();
-			mReload = true;
 			if(!(DreamDroid.getLocations().indexOf(mCurrentLocation) >= 0))
 				for (String location : DreamDroid.getLocations()) {
 					mCurrentLocation = location;
 					break;
 				}
-		} else {
-			mMovie = savedInstanceState.getParcelable("movie");
-			mSelectedTags = new ArrayList<>(Arrays.asList(savedInstanceState.getStringArray("selectedTags")));
-			mOldTags = new ArrayList<>(Arrays.asList(savedInstanceState.getStringArray("oldTags")));
-			mCurrentLocation = savedInstanceState.getString("currentLocation");
 		}
 	}
 
@@ -103,44 +103,13 @@ public class MovieListFragment extends BaseHttpRecyclerFragment implements Multi
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		registerFab(R.id.fab_main, R.string.choose_location, R.drawable.ic_action_folder, new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				onItemSelected(Statics.ITEM_SELECT_LOCATION);
-			}
-		});
+		registerFab(R.id.fab_main, R.string.choose_location, R.drawable.ic_action_folder, v -> onItemSelected(Statics.ITEM_SELECT_LOCATION));
 	}
 
 	@Override
 	public void createOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.createOptionsMenu(menu, inflater);
 		inflater.inflate(R.menu.locactions_and_tags, menu);
-	}
-
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		outState.putParcelable("movie", mMovie);
-
-		String[] selectedTags;
-		if (mSelectedTags != null) {
-			selectedTags = new String[mSelectedTags.size()];
-			mSelectedTags.toArray(selectedTags);
-		} else {
-			selectedTags = new String[0];
-		}
-		outState.putStringArray("selectedTags", selectedTags);
-
-		String[] oldTags;
-		if (mOldTags != null) {
-			oldTags = new String[mOldTags.size()];
-			mOldTags.toArray(oldTags);
-		} else {
-			oldTags = new String[0];
-		}
-		outState.putStringArray("oldTags", oldTags);
-		outState.putString("currentLocation", mCurrentLocation);
-
-		super.onSaveInstanceState(outState);
 	}
 
 	@Override
@@ -215,12 +184,7 @@ public class MovieListFragment extends BaseHttpRecyclerFragment implements Multi
 	public void showPopupMenu(View v) {
 		PopupMenu menu = new PopupMenu(getAppCompatActivity(), v);
 		menu.getMenuInflater().inflate(R.menu.popup_movielist, menu.getMenu());
-		menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-			@Override
-			public boolean onMenuItemClick(MenuItem menuItem) {
-				return onMovieAction(menuItem.getItemId());
-			}
-		});
+		menu.setOnMenuItemClickListener(menuItem -> onMovieAction(menuItem.getItemId()));
 		menu.show();
 	}
 
@@ -270,6 +234,7 @@ public class MovieListFragment extends BaseHttpRecyclerFragment implements Multi
 		return params;
 	}
 
+	@NonNull
 	@Override
 	public Loader<LoaderResult<ArrayList<ExtendedHashMap>>> onCreateLoader(int id, Bundle args) {
 		return new AsyncListLoader(getAppCompatActivity(), new MovieListRequestHandler(), true, args);
@@ -307,7 +272,7 @@ public class MovieListFragment extends BaseHttpRecyclerFragment implements Multi
 					showToast(getString(R.string.no_epg_available));
 					break;
 				}
-				getMultiPaneHandler().showDialogFragment(MovieDetailDialog.newInstance(mMovie), "movie_detail_dialog");
+				getMultiPaneHandler().showDialogFragment(MovieDetailBottomSheet.newInstance(new Movie(mMovie)), "movie_detail_dialog");
 				break;
 			}
 

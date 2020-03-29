@@ -181,7 +181,7 @@
     <string name="loading">Loading&#8230;</string>
     <string name="about">About</string>
     <string name="changelog">Changelog</string>
-    <string name="license">LICENSE:\nLicensed under the Create-Commons Attribution-Noncommercial-Share Alike 3.0 Unported http://creativecommons.org/licenses/by-nc-sa/3.0</string>
+    <string name="license_gplv3">LICENSE:\nDreamDroid is free Software!\nLicensed under the GNU General Public License 3 https://www.gnu.org/licenses/gpl-3.0.html</string>
     <string name="source_code_link">Source code available at: http://github.com/sreichholf/dreamDroid</string>
     <string name="active_profile">Profile</string>
     <string name="connection">Connection</string>
@@ -309,11 +309,6 @@
     <string name="use_fake_picon">Use a fake picon</string>
     <string name="use_fake_picon_long">Use a fake picon (picon_default.png) to avoid copyright problems on screenshots</string>
     <string name="host_unreach">Could not connect to host</string>
-    <string name="allow_tracking_long">Allow collection of anonymized usage statistics</string>
-    <string name="allow_tracking">Usage statistics</string>
-    <string name="privacy_statement">dreamDroid contains a module for collecting statistical usage data. The data to be collected contains the following Information:\n\n&#8226; Anonymized IP Address\n&#8226; The "Pages" you open (e.g. ServiceList, Movies, ...) including the duration\n&#8226; Crashes you experience\n\nThere is no unique ID or full IP-Adress being recorded and your data will not be fowarded or given to any 3rd party.\n\nDo you agree with enabling anonymized statistics?</string>
-    <string name="privacy_statement_title">Privacy Statement</string>
-    <string name="privacy">Privacy</string>
     <string name="next_event">Next Event</string>
     <string name="use_encoder">Use encoder for streaming</string>
     <string name="encoder_path">Stream path</string>
@@ -332,7 +327,6 @@
     <string name="previous_lower">previous</string>
     <string name="next_lower">next</string>
     <string-array name="theme_option_entries">
-        <item>Auto</item>
         <item>Day</item>
         <item>Night</item>
         <item>Follow System</item>
@@ -360,4 +354,20 @@
     <string name="subtitles">Subtitles</string>
     <string name="no_tracks">No tracks available!</string>
     <string name="preferences">Preferences</string>
+    <string name="backup">Backup</string>
+    <string name="backup_current_profile">current</string>
+    <string name="backup_export">Export</string>
+    <string name="backup_import">Import</string>
+    <string name="backup_settings">Settings</string>
+    <string name="backup_profiles">Profiles</string>
+    <string name="backup_export_settings">Export settings</string>
+    <string name="backup_export_profiles">Export profiles</string>
+    <string name="backup_export_successful">Export successful</string>
+    <string name="backup_import_successful">Import successful</string>
+    <string name="backup_export_missing_permission">Please grant "Storage" permission to use this feature!</string>
+    <string name="licenses">Licenses</string>
+    <string name="license">Lizenz</string>
+    <string name="encoder">Encoder</string>
+    <string name="direct_streaming">Direct Streaming</string>
+    <string name="backup_import_error">Backup import failed!</string>
 </resources>

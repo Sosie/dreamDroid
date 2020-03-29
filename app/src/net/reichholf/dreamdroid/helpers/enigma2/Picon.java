@@ -33,7 +33,7 @@ public class Picon {
 	public static String getBasepath(Context context){
 		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
 		if(sp.getBoolean(DreamDroid.PREFS_KEY_PICONS_ONLINE, DreamDroid.isTV(context))) {
-			return String.format("%s/", sp.getString(DreamDroid.PREFS_KEY_SYNC_PICONS_PATH, "/usr/share/enigma2/picon"), "/");
+			return String.format("%s/", sp.getString(DreamDroid.PREFS_KEY_SYNC_PICONS_PATH, "/usr/share/enigma2/picon"));
 		}
 
 		if(!Environment.getExternalStorageDirectory().canWrite())
@@ -91,7 +91,7 @@ public class Picon {
 			piconView.setVisibility(View.VISIBLE);
 
 		String uri = getPiconUri(context, fileName);
-		Picasso.with(context).load(uri).fit().centerInside().tag(tag).error(R.drawable.dreamdroid_logo_simple).into(piconView, callback);
+		Picasso.get().load(uri).fit().centerInside().tag(tag).error(R.drawable.dreamdroid_logo_simple).into(piconView, callback);
 	}
 
 	public static String getPiconUri(Context context, String fileName) {

@@ -180,8 +180,7 @@
     <string name="default_bouquet_not_set">Das Standard-Bouquet konnte nicht gesetzt werden!</string>
     <string name="loading">Lade&#8230;</string>
     <string name="about">Über</string>
-<string name="license">Lizenz:
-\nLizensiert unter Create-Commons Attribution-Noncommercial-Share Alike 3.0 Unported http://creativecommons.org/licenses/by-nc-sa/3.0</string>
+    <string name="license_gplv3">Lizenz:\nDreamdroid ist freie Software!\nLizensiert unter GNU General Public License 3 https://www.gnu.org/licenses/gpl-3.0.de.html</string>
     <string name="source_code_link">Der Quellcode ist verfügbar unter: http://github.com/sreichholf/dreamDroid</string>
     <string name="active_profile">Aktives Profil</string>
     <string name="connection">Verbindung</string>
@@ -284,7 +283,6 @@
     <string name="disable_fab_reload">Alter Reload Button</string>
     <string name="disable_fab_reload_long">Wenn aktiv, wird der Reload-Button in der Actionbar angezeigt</string>
     <string name="reset_default">Standard zurücksetzen</string>
-    <string name="autodiscover_Dreamboxes">Dreamboxen automatisch finden</string>
     <string name="enable">Aktivieren</string>
     <string name="epg_sync">Synchronisiere EPG</string>
     <string name="epg_sync_finished">EPG wurde synchronisiert</string>
@@ -306,12 +304,7 @@
     <string name="auth_error">Anmelden fehlgeschlagen (Benutzer/Passwort prüfen)</string>
     <string name="more">Mehr</string>
     <string name="host_unreach">Host nicht erreichbar</string>
-    <string name="privacy_statement_title">Datenschutzerklärung</string>
-    <string name="privacy_statement">dreamDroid enthält ein Modul zur Erfassung statistischer Nutzungsdaten. Die gesammelten Daten enthalten folgende Informationen:\n\n&#8226; Anonymisierte IP Adresse\n&#8226; Die geöffneten "Seiten" (z.B. Kanalliste, Filme, ...)inkl. der Dauer der Nutzung\n&#8226; Programmabstürze.\n\nEs wird keine eineutige ID oder vollständige IP Adresse erfasst/gespeichert. Die erfassten Daten werden nicht an Dritte weitergegeben.\n\nStimmen Sie der Erfassung anonymer Statistiken zu?</string>
-    <string name="privacy">Datenschutz</string>
     <string name="next_event">Nächste Sendung</string>
-    <string name="allow_tracking">Tracking erlauben</string>
-    <string name="allow_tracking_long">Das Sammeln anonymisierter Nutzungsstatistiken erlauben</string>
     <string name="dump_xml_long">XML Inhalte auf dem externen Speicher ablegen</string>
     <string name="use_fake_picon">Ersatz Picon benutzen</string>
     <string name="use_fake_picon_long">Ersatzpicon (picon_default.png) nutzen um Copyrightprobleme bei Screenshots zu vermeiden</string>
@@ -333,7 +326,6 @@
     <string name="previous_lower">vorheriger</string>
 
     <string-array name="theme_option_entries">
-        <item>Auto</item>
         <item>Tag</item>
         <item>Nacht</item>
         <item>Wie System</item>
@@ -361,4 +353,22 @@
     <string name="streaming">Streaming</string>
     <string name="subtitle">Untertitel</string>
     <string name="subtitles">Untertitel</string>
+    <string name="license">Lizenze</string>
+    <string name="backup">Backup</string>
+    <string name="backup_current_profile">aktiv</string>
+    <string name="backup_export">Export</string>
+    <string name="backup_export_missing_permission">Bitte Berechtigung für Datenspeicher erteilen</string>
+    <string name="backup_export_profiles">Profile exportieren</string>
+    <string name="backup_export_settings">Einstellungen exportieren</string>
+    <string name="backup_export_successful">Export erfolgreich</string>
+    <string name="backup_import">Import</string>
+    <string name="backup_import_successful">Import erfolgreich</string>
+    <string name="backup_profiles">Profile</string>
+    <string name="backup_settings">Einstellungen</string>
+    <string name="licenses">Lizenzen</string>
+    <string name="no_tracks">Keine Tonspuren verfügbar!</string>
+    <string name="preferences">Einstellungen</string>
+    <string name="encoder">Encoder</string>
+    <string name="direct_streaming">Direktes Streaming</string>
+    <string name="backup_import_error">Backup-Import fehlgeschlagen!</string>
 </resources>

@@ -17,14 +17,14 @@ import android.media.MediaScannerConnection.MediaScannerConnectionClient;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.FileProvider;
-import android.support.v4.content.Loader;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.ShareActionProvider;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.loader.app.LoaderManager.LoaderCallbacks;
+import androidx.core.content.FileProvider;
+import androidx.loader.content.Loader;
+import androidx.core.view.MenuItemCompat;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.appcompat.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -33,8 +33,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.evernote.android.state.State;
+import com.github.chrisbanes.photoview.PhotoView;
 
 import net.reichholf.dreamdroid.DreamDroid;
 import net.reichholf.dreamdroid.R;
@@ -52,8 +54,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
-
-import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
  * Allows fetching and showing the actual TV-Screen content
@@ -77,14 +77,13 @@ public class ScreenShotFragment extends BaseFragment implements
 
 	private boolean mSetTitle;
 	private boolean mActionsEnabled;
-	private ImageView mImageView;
+	private PhotoView mImageView;
 	private int mType;
 	private int mFormat;
 	private int mSize;
 	private String mFilename;
-	private byte[] mRawImage;
+	@State public byte[] mRawImage;
 	private MediaScannerConnection mScannerConn;
-	private PhotoViewAttacher mAttacher;
 	private HttpFragmentHelper mHttpHelper;
 
 	private ShareActionProvider mShareActionProvider;
@@ -152,10 +151,10 @@ public class ScreenShotFragment extends BaseFragment implements
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.screenshot, null);
 
-		mImageView = (ImageView) view.findViewById(R.id.screenshoot);
+		mImageView = view.findViewById(R.id.screenshoot);
 		mImageView.setBackgroundColor(Color.BLACK);
 
 		Bundle extras = getArguments();
@@ -169,19 +168,16 @@ public class ScreenShotFragment extends BaseFragment implements
 		mSize = extras.getInt(KEY_SIZE, -1);
 		mFilename = extras.getString(KEY_FILENAME);
 
-		if (savedInstanceState != null) {
-			mRawImage = savedInstanceState.getByteArray("rawImage");
-		} else if (mRawImage == null) {
+		if (mRawImage == null) {
 			mRawImage = new byte[0];
 		}
-		mAttacher = new PhotoViewAttacher(mImageView);
 		return view;
 	}
 
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		mHttpHelper.onViewCreated(view, savedInstanceState);
-		SwipeRefreshLayout SwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.ptr_layout);
+		SwipeRefreshLayout SwipeRefreshLayout = view.findViewById(R.id.ptr_layout);
 		SwipeRefreshLayout.setEnabled(false);
 	}
 
@@ -206,12 +202,6 @@ public class ScreenShotFragment extends BaseFragment implements
 		mScannerConn.disconnect();
 		mScannerConn = null;
 		super.onPause();
-	}
-
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		mAttacher.cleanup();
 	}
 
 	@Override
@@ -265,7 +255,7 @@ public class ScreenShotFragment extends BaseFragment implements
 	public void onSaveInstanceState(Bundle outState) {
 		if (mScannerConn != null)
 			mScannerConn.disconnect();
-		outState.putByteArray("rawImage", mRawImage);
+		super.onSaveInstanceState(outState);
 	}
 
 	@Override
@@ -289,7 +279,7 @@ public class ScreenShotFragment extends BaseFragment implements
 			return;
 		mRawImage = bytes;
 		mImageView.setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
-		mAttacher.update();
+		mImageView.getAttacher().update();
 		setShareIntent();
 	}
 
@@ -404,13 +394,14 @@ public class ScreenShotFragment extends BaseFragment implements
 		return false;
 	}
 
+	@NonNull
 	@Override
 	public Loader<LoaderResult<byte[]>> onCreateLoader(int id, Bundle args) {
 		return new AsyncByteLoader(getAppCompatActivity(), args);
 	}
 
 	@Override
-	public void onLoadFinished(Loader<LoaderResult<byte[]>> loader, LoaderResult<byte[]> result) {
+	public void onLoadFinished(@NonNull Loader<LoaderResult<byte[]>> loader, LoaderResult<byte[]> result) {
 		mHttpHelper.onLoadFinished();
 		if (!result.isError()) {
 			if (result.getResult().length > 0)
@@ -423,7 +414,7 @@ public class ScreenShotFragment extends BaseFragment implements
 	}
 
 	@Override
-	public void onLoaderReset(Loader<LoaderResult<byte[]>> loader) {
+	public void onLoaderReset(@NonNull Loader<LoaderResult<byte[]>> loader) {
 		mHttpHelper.onLoadFinished();
 	}
 

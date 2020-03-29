@@ -10,16 +10,20 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
-import android.support.v4.widget.SwipeRefreshLayout;
+import androidx.annotation.NonNull;
+
+import com.evernote.android.state.State;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.livefront.bridge.Bridge;
+
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 
@@ -32,7 +36,6 @@ import net.reichholf.dreamdroid.fragment.helper.HttpFragmentHelper;
 import net.reichholf.dreamdroid.fragment.interfaces.IBaseFragment;
 import net.reichholf.dreamdroid.fragment.interfaces.IHttpBase;
 import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
-import net.reichholf.dreamdroid.helpers.ExtendedHashMapHelper;
 import net.reichholf.dreamdroid.helpers.NameValuePair;
 import net.reichholf.dreamdroid.helpers.SimpleHttpClient;
 import net.reichholf.dreamdroid.helpers.Statics;
@@ -40,7 +43,6 @@ import net.reichholf.dreamdroid.helpers.enigma2.requesthandler.SimpleResultReque
 import net.reichholf.dreamdroid.loader.LoaderResult;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * @author sreichholf
@@ -49,12 +51,10 @@ import java.util.HashMap;
 public abstract class AbstractHttpListFragment extends DreamDroidListFragment implements
 		LoaderManager.LoaderCallbacks<LoaderResult<ArrayList<ExtendedHashMap>>>, IHttpBase, IBaseFragment, SwipeRefreshLayout.OnRefreshListener, SimpleResultTask.SimpleResultTaskHandler {
 
-	public static final String BUNDLE_KEY_LIST = "list";
-
 	protected final String sData = "data";
 	protected boolean mReload;
 	protected boolean mEnableReload;
-	protected ArrayList<ExtendedHashMap> mMapList;
+	@State public ArrayList<ExtendedHashMap> mMapList;
 	protected ExtendedHashMap mData;
 	protected Bundle mExtras;
 	protected BaseAdapter mAdapter;
@@ -72,28 +72,25 @@ public abstract class AbstractHttpListFragment extends DreamDroidListFragment im
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		Bridge.restoreInstanceState(this, savedInstanceState);
 		if (mHttpHelper == null)
 			mHttpHelper = new HttpFragmentHelper(this);
 		else
 			mHttpHelper.bindToFragment(this);
 		setHasOptionsMenu(true);
 		mExtras = getArguments();
-		mMapList = null;
 
-		if (savedInstanceState != null) {
-			mMapList = ExtendedHashMapHelper.restoreListFromBundle(savedInstanceState, BUNDLE_KEY_LIST);
-		} else {
+		if (mMapList == null) {
 			mMapList = new ArrayList<>();
 		}
 
 		if (mExtras != null) {
-			HashMap<String, Object> map = (HashMap<String, Object>) mExtras.getSerializable("data");
-			if (map != null) {
-				mData = new ExtendedHashMap(map);
-			}
+			mData = (ExtendedHashMap) mExtras.getSerializable("data");
 		} else {
 			mExtras = new Bundle();
+		}
+		if (mData == null) {
+			mData = new ExtendedHashMap(mData);
 		}
 		DreamDroid.loadCurrentProfile(getAppCompatActivity());
 	}
@@ -123,7 +120,13 @@ public abstract class AbstractHttpListFragment extends DreamDroidListFragment im
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putSerializable(BUNDLE_KEY_LIST, mMapList);
+		Bridge.saveInstanceState(this, outState);
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		Bridge.clear(this);
 	}
 
 	@Override
@@ -139,21 +142,16 @@ public abstract class AbstractHttpListFragment extends DreamDroidListFragment im
 	public void connectFabReload(View view, AbsListView listView) {
 		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getAppCompatActivity());
 		if (!sp.getBoolean("disable_fab_reload", false)) {
-			registerFab(R.id.fab_reload, view, R.string.reload, R.drawable.ic_action_refresh, new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					reload();
-				}
-			}, listView, true);
-			FloatingActionButton fab_reload = (FloatingActionButton) getAppCompatActivity().findViewById(R.id.fab_reload);
+			registerFab(R.id.fab_reload, view, R.string.reload, R.drawable.ic_action_refresh, v -> reload(), listView, true);
+			FloatingActionButton fab_reload = getAppCompatActivity().findViewById(R.id.fab_reload);
 			fab_reload.hide();
 		}
 	}
 
 	public void detachFabReload() {
-		FloatingActionButton fab = (FloatingActionButton) getAppCompatActivity().findViewById(R.id.fab_reload);
+		FloatingActionButton fab = getAppCompatActivity().findViewById(R.id.fab_reload);
 		if (fab != null) {
-			fab.setVisibility(View.GONE);
+			fab.hide();
 			((MainActivity)getAppCompatActivity()).unregisterFab(R.id.fab_reload);
 		}
 	}
@@ -223,12 +221,7 @@ public abstract class AbstractHttpListFragment extends DreamDroidListFragment im
 	 *           statics)
 	 */
 	protected void registerOnClickListener(View v, final int id) {
-		v.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				onItemSelected(id);
-			}
-		});
+		v.setOnClickListener(v1 -> onItemSelected(id));
 	}
 
 	/**
@@ -325,7 +318,7 @@ public abstract class AbstractHttpListFragment extends DreamDroidListFragment im
 	}
 
 	@Override
-	public void onLoadFinished(Loader<LoaderResult<ArrayList<ExtendedHashMap>>> loader,
+	public void onLoadFinished(@NonNull Loader<LoaderResult<ArrayList<ExtendedHashMap>>> loader,
 							   LoaderResult<ArrayList<ExtendedHashMap>> result) {
 		mHttpHelper.onLoadFinished();
 		mMapList.clear();
@@ -347,7 +340,7 @@ public abstract class AbstractHttpListFragment extends DreamDroidListFragment im
 	}
 
 	@Override
-	public void onLoaderReset(Loader<LoaderResult<ArrayList<ExtendedHashMap>>> loader) {
+	public void onLoaderReset(@NonNull Loader<LoaderResult<ArrayList<ExtendedHashMap>>> loader) {
 	}
 
 	public SimpleHttpClient getHttpClient() {

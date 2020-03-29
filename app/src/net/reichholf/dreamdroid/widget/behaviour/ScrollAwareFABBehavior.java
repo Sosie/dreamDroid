@@ -1,9 +1,10 @@
 package net.reichholf.dreamdroid.widget.behaviour;
 
 import android.content.Context;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.view.ViewCompat;
+import androidx.annotation.NonNull;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.core.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -20,18 +21,14 @@ public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
 	}
 
 	@Override
-	public boolean onStartNestedScroll(final CoordinatorLayout coordinatorLayout, final FloatingActionButton child,
-									   final View directTargetChild, final View target, final int nestedScrollAxes) {
-		// Ensure we react to vertical scrolling
-		return nestedScrollAxes == ViewCompat.SCROLL_AXIS_VERTICAL
-				|| super.onStartNestedScroll(coordinatorLayout, child, directTargetChild, target, nestedScrollAxes);
+	public boolean onStartNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull FloatingActionButton child, @NonNull View directTargetChild, @NonNull View target, int axes, int type) {
+		return axes == ViewCompat.SCROLL_AXIS_VERTICAL
+				|| super.onStartNestedScroll(coordinatorLayout, child, directTargetChild, target, axes, type);
 	}
 
 	@Override
-	public void onNestedScroll(final CoordinatorLayout coordinatorLayout, final FloatingActionButton child,
-							   final View target, final int dxConsumed, final int dyConsumed,
-							   final int dxUnconsumed, final int dyUnconsumed) {
-		super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
+	public void onNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull FloatingActionButton child, @NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type) {
+		super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, type);
 		Boolean tag = (Boolean) child.getTag(R.id.fab_scrolling_view_behavior_enabled);
 		if(tag == null || child.getTag(R.id.fab_scrolling_view_behavior_enabled).equals(false)) {
 			child.hide();
@@ -42,8 +39,9 @@ public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
 			child.hide(new FloatingActionButton.OnVisibilityChangedListener() {
 				@Override
 				public void onHidden(FloatingActionButton fab) {
-					super.onShown(fab);
-					fab.setVisibility(View.INVISIBLE);
+					super.onHidden(fab);
+					View v = fab;
+					v.setVisibility(View.INVISIBLE);
 				}
 			});
 		} else if (dyConsumed < 0 && child.getVisibility() != View.VISIBLE) {

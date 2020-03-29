@@ -7,6 +7,7 @@
 package net.reichholf.dreamdroid.adapter;
 
 import android.content.Context;
+import androidx.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,8 +34,9 @@ public class MediaListAdapter extends ArrayAdapter<ExtendedHashMap> {
 
 	}
 
+	@NonNull
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(int position, View convertView, @NonNull ViewGroup parent) {
 		View view = convertView;
 		if (view == null) {
 			LayoutInflater li = LayoutInflater.from(getContext());
@@ -43,7 +45,7 @@ public class MediaListAdapter extends ArrayAdapter<ExtendedHashMap> {
 
 		ExtendedHashMap media = getItem(position);
 		if (media != null) {
-			TextView textView = (TextView) view.findViewById(android.R.id.text1);
+			TextView textView = view.findViewById(android.R.id.text1);
 			String root = media.getString(Mediaplayer.KEY_ROOT);
 			String isDirectory = media.getString(Mediaplayer.KEY_IS_DIRECTORY);
 			String reference = media.getString(Mediaplayer.KEY_SERVICE_REFERENCE);

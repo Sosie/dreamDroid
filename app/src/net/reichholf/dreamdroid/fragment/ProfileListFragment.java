@@ -11,9 +11,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.v7.view.ActionMode;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.appcompat.view.ActionMode;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,7 +24,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import net.reichholf.dreamdroid.DatabaseHelper;
@@ -35,6 +34,7 @@ import net.reichholf.dreamdroid.activities.SimpleToolbarFragmentActivity;
 import net.reichholf.dreamdroid.adapter.recyclerview.ProfileAdapter;
 import net.reichholf.dreamdroid.asynctask.DetectDevicesTask;
 import net.reichholf.dreamdroid.fragment.abs.BaseRecyclerFragment;
+import net.reichholf.dreamdroid.fragment.dialogs.IndeterminateProgress;
 import net.reichholf.dreamdroid.fragment.dialogs.PositiveNegativeDialog;
 import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
 import net.reichholf.dreamdroid.helpers.Statics;
@@ -61,7 +61,7 @@ public class ProfileListFragment extends BaseRecyclerFragment implements DetectD
 	private RecyclerView.Adapter mAdapter;
 	private DetectDevicesTask mDetectDevicesTask;
 
-	private MaterialDialog mProgress;
+	private IndeterminateProgress mProgress;
 
 	private int mCurrentPos;
 
@@ -121,14 +121,7 @@ public class ProfileListFragment extends BaseRecyclerFragment implements DetectD
 				return;
 			final RecyclerView rv = getRecyclerView();
 			mSelectionSupport.setItemChecked(mSelectionSupport.getCheckedItemPosition(), false);
-			rv.post(new
-
-							Runnable() {
-								@Override
-								public void run() {
-									mSelectionSupport.setChoiceMode(ItemSelectionSupport.ChoiceMode.NONE);
-								}
-							}
+			rv.post(() -> mSelectionSupport.setChoiceMode(ItemSelectionSupport.ChoiceMode.NONE)
 
 			);
 		}
@@ -143,6 +136,7 @@ public class ProfileListFragment extends BaseRecyclerFragment implements DetectD
 
 			if (mProgress != null) {
 				mProgress.dismiss();
+				mProgress = null;
 			}
 			MaterialDialog.Builder builder = new MaterialDialog.Builder(getAppCompatActivity());
 			builder.progress(true, 0)
@@ -150,8 +144,9 @@ public class ProfileListFragment extends BaseRecyclerFragment implements DetectD
 					.title(R.string.searching)
 					.content(R.string.searching_known_devices)
 					.cancelable(false);
-			mProgress = builder.build();
-			mProgress.show();
+			mProgress = IndeterminateProgress.newInstance(R.string.searching, R.string.searching_known_devices);
+			mProgress.setCancelable(false);
+			getMultiPaneHandler().showDialogFragment(mProgress, "dialog_devicesearch_indeterminate");
 			mDetectDevicesTask = new DetectDevicesTask(this);
 			mDetectDevicesTask.execute();
 		} else {
@@ -181,7 +176,11 @@ public class ProfileListFragment extends BaseRecyclerFragment implements DetectD
 	 */
 	@Override
 	public void onDevicesDetected(ArrayList<Profile> profiles) {
-		mProgress.dismiss();
+		mProgress = (IndeterminateProgress) getFragmentManager().findFragmentByTag("dialog_devicesearch_indeterminate");
+		if (mProgress != null) {
+			mProgress.dismiss();
+			mProgress = null;
+		}
 		mDetectedProfiles = profiles;
 
 		MaterialDialog.Builder builder = new MaterialDialog.Builder(getActivity());
@@ -198,26 +197,15 @@ public class ProfileListFragment extends BaseRecyclerFragment implements DetectD
 			builder.positiveText(R.string.reload);
 			builder.negativeText(R.string.add_all);
 
-			builder.itemsCallback(new MaterialDialog.ListCallback() {
-				@Override
-				public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-					mProfile = mDetectedProfiles.get(which);
-					editProfile();
-				}
+			builder.itemsCallback((dialog, itemView, which, text) -> {
+				mProfile = mDetectedProfiles.get(which);
+				editProfile();
 			});
-			builder.onPositive(new MaterialDialog.SingleButtonCallback() {
-				@Override
-				public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-					mDetectedProfiles = null;
-					detectDevices();
-				}
+			builder.onPositive((dialog, which) -> {
+				mDetectedProfiles = null;
+				detectDevices();
 			});
-			builder.onNegative(new MaterialDialog.SingleButtonCallback() {
-				@Override
-				public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-					addAllDetectedDevices();
-				}
-			});
+			builder.onNegative((dialog, which) -> addAllDetectedDevices());
 		} else {
 			builder.content(R.string.autodiscovery_failed);
 			builder.neutralText(android.R.string.ok);
@@ -225,6 +213,7 @@ public class ProfileListFragment extends BaseRecyclerFragment implements DetectD
 		builder.show();
 	}
 
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		mCardListStyle = true;
 		mHasFabMain = true;
@@ -243,12 +232,7 @@ public class ProfileListFragment extends BaseRecyclerFragment implements DetectD
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.card_recycler_content, container, false);
-		registerFab(R.id.fab_main, R.string.profile_add, R.drawable.ic_action_fab_add, new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				createProfile();
-			}
-		});
+		registerFab(R.id.fab_main, R.string.profile_add, R.drawable.ic_action_fab_add, v -> createProfile());
 		return view;
 	}
 
@@ -262,17 +246,22 @@ public class ProfileListFragment extends BaseRecyclerFragment implements DetectD
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-
 		reloadProfiles();
-		if (savedInstanceState != null) {
-			int pos = savedInstanceState.getInt("cursorPosition");
-			if (pos < mProfiles.size()) {
-				mProfile = mProfiles.get(pos);
-			}
-		}
-
 	}
 
+	@Override
+	public void onPause() {
+		if (mDetectDevicesTask != null) {
+			mDetectDevicesTask.cancel(true);
+			mDetectDevicesTask = null;
+		}
+		IndeterminateProgress progress = (IndeterminateProgress) getFragmentManager().findFragmentByTag("dialog_devicesearch_indeterminate");
+		if (progress != null) {
+			progress.dismiss();
+		}
+		mProgress = null;
+		super.onPause();
+	}
 
 	@Override
 	public void onItemClick(RecyclerView parent, View view, int position, long id) {
@@ -331,12 +320,6 @@ public class ProfileListFragment extends BaseRecyclerFragment implements DetectD
 		mProfile = mProfiles.get(mCurrentPos);
 		mActionMode = getAppCompatActivity().startSupportActionMode(mActionModeCallback);
 		mSelectionSupport.setItemChecked(mCurrentPos, true);
-	}
-
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		outState.putInt("profileId", mProfile.getId());
-		super.onSaveInstanceState(outState);
 	}
 
 	@Override
@@ -434,7 +417,7 @@ public class ProfileListFragment extends BaseRecyclerFragment implements DetectD
 		Intent intent = new Intent(activity, SimpleToolbarFragmentActivity.class);
 		intent.putExtra("fragmentClass", ProfileEditFragment.class);
 		intent.putExtra("titleResource", profile == null ? R.string.profile_add : R.string.edit_profile);
-		intent.putExtra("serializableData", (Serializable) data);
+		intent.putExtra("serializableData", data);
 		activity.startActivityForResult(intent, Statics.REQUEST_EDIT_PROFILE);
 	}
 

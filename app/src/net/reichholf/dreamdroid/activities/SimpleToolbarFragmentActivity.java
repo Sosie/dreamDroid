@@ -1,7 +1,7 @@
 package net.reichholf.dreamdroid.activities;
 
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.widget.Toolbar;
 import android.view.WindowManager;
 
 import net.reichholf.dreamdroid.R;
@@ -18,7 +18,7 @@ public class SimpleToolbarFragmentActivity extends SimpleFragmentActivity {
 		super.initViews(initFragment);
 
 		setContentView(R.layout.simple_layout_with_toolbar);
-		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 
 		//noinspection ConstantConditions

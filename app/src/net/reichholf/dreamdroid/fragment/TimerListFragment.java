@@ -10,9 +10,10 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.content.Loader;
-import android.support.v7.view.ActionMode;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.loader.content.Loader;
+import androidx.appcompat.view.ActionMode;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,6 +21,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.evernote.android.state.State;
 
 import net.reichholf.dreamdroid.DreamDroid;
 import net.reichholf.dreamdroid.R;
@@ -87,15 +90,10 @@ public class TimerListFragment extends BaseHttpRecyclerFragment {
 				return;
 			final RecyclerView rv = getRecyclerView();
 			mSelectionSupport.setItemChecked(mSelectionSupport.getCheckedItemPosition(), false);
-			getRecyclerView().post(new Runnable() {
-				@Override
-				public void run() {
-					mSelectionSupport.setChoiceMode(ItemSelectionSupport.ChoiceMode.SINGLE);
-				}
-			});
+			getRecyclerView().post(() -> mSelectionSupport.setChoiceMode(ItemSelectionSupport.ChoiceMode.SINGLE));
 		}
 	};
-	private ExtendedHashMap mTimer;
+	@State public ExtendedHashMap mTimer;
 	private ProgressDialog mProgress;
 	protected int mCurrentPos;
 
@@ -109,22 +107,13 @@ public class TimerListFragment extends BaseHttpRecyclerFragment {
 
 		mCurrentPos = -1;
 		mIsActionMode = false;
-		if (savedInstanceState != null) {
-			mTimer = savedInstanceState.getParcelable("timer");
-		} else {
-			mReload = true;
-		}
+		mReload = true;
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.card_recycler_content, container, false);
-		registerFab(R.id.fab_main, R.string.new_timer, R.drawable.ic_action_fab_add, new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				onItemSelected(Statics.ITEM_NEW_TIMER);
-			}
-		});
+		registerFab(R.id.fab_main, R.string.new_timer, R.drawable.ic_action_fab_add, v -> onItemSelected(Statics.ITEM_NEW_TIMER));
 		return view;
 	}
 
@@ -144,12 +133,6 @@ public class TimerListFragment extends BaseHttpRecyclerFragment {
 	public void onDestroyView() {
 		endActionMode();
 		super.onDestroyView();
-	}
-
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		outState.putParcelable("timer", mTimer);
-		super.onSaveInstanceState(outState);
 	}
 
 	/*
@@ -264,7 +247,7 @@ public class TimerListFragment extends BaseHttpRecyclerFragment {
 		}
 
 		mProgress = ProgressDialog.show(getAppCompatActivity(), "", getText(R.string.cleaning_timerlist), true);
-		execSimpleResultTask(new TimerCleanupRequestHandler(), new ArrayList<NameValuePair>());
+		execSimpleResultTask(new TimerCleanupRequestHandler(), new ArrayList<>());
 	}
 
 	@Override
@@ -278,6 +261,7 @@ public class TimerListFragment extends BaseHttpRecyclerFragment {
 		reload();
 	}
 
+	@NonNull
 	@Override
 	public Loader<LoaderResult<ArrayList<ExtendedHashMap>>> onCreateLoader(int id, Bundle args) {
 		return new AsyncListLoader(getAppCompatActivity(), new TimerListRequestHandler(), false, args);

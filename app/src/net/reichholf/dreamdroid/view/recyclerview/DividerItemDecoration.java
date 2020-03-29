@@ -1,16 +1,16 @@
 package net.reichholf.dreamdroid.view.recyclerview;
 
-/**
- * Created by Stephan on 21.05.2016.
+/*
+  Created by Stephan on 21.05.2016.
  */
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -20,7 +20,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 	private boolean mShowFirstDivider = false;
 	private boolean mShowLastDivider = false;
 
-	int mOrientation = -1;
+	@RecyclerView.Orientation int mOrientation = RecyclerView.VERTICAL;
 
 	public DividerItemDecoration(Context context, AttributeSet attrs) {
 		final TypedArray a = context

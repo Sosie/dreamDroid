@@ -4,10 +4,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -36,7 +37,7 @@ import java.util.HashMap;
  */
 public abstract class BaseHttpRecyclerFragment extends BaseRecyclerFragment implements
 		LoaderManager.LoaderCallbacks<LoaderResult<ArrayList<ExtendedHashMap>>>, IHttpBase, SimpleResultTask.SimpleResultTaskHandler, ActionDialog.DialogActionListener {
-	public static final String BUNDLE_KEY_LIST = "list";
+
 	protected final String sData = "data";
 
 	protected boolean mReload;
@@ -64,7 +65,7 @@ public abstract class BaseHttpRecyclerFragment extends BaseRecyclerFragment impl
 		mMapList = new ArrayList<>();
 
 		if (mExtras != null) {
-			HashMap<String, Object> map = (HashMap<String, Object>) mExtras.getSerializable("data");
+			ExtendedHashMap map = (ExtendedHashMap) mExtras.getSerializable("data");
 			if (map != null) {
 				mData = new ExtendedHashMap(map);
 			}
@@ -109,12 +110,7 @@ public abstract class BaseHttpRecyclerFragment extends BaseRecyclerFragment impl
 		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getAppCompatActivity());
 		if (sp.getBoolean("disable_fab_reload", false))
 			return;
-		registerFab(R.id.fab_reload, R.string.reload, R.drawable.ic_action_refresh, new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				reload();
-			}
-		}, true);
+		registerFab(R.id.fab_reload, R.string.reload, R.drawable.ic_action_refresh, v -> reload(), true);
 	}
 
 	@Override
@@ -123,7 +119,7 @@ public abstract class BaseHttpRecyclerFragment extends BaseRecyclerFragment impl
 	}
 
 	public void detachFabReload() {
-		FloatingActionButton fab = (FloatingActionButton) getAppCompatActivity().findViewById(R.id.fab_reload);
+		FloatingActionButton fab = getAppCompatActivity().findViewById(R.id.fab_reload);
 		if (fab != null) {
 			setFabEnabled(fab.getId(), false);
 		}
@@ -194,12 +190,7 @@ public abstract class BaseHttpRecyclerFragment extends BaseRecyclerFragment impl
 	 *           statics)
 	 */
 	protected void registerOnClickListener(View v, final int id) {
-		v.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				onItemSelected(id);
-			}
-		});
+		v.setOnClickListener(v1 -> onItemSelected(id));
 	}
 
 	/**
@@ -298,7 +289,7 @@ public abstract class BaseHttpRecyclerFragment extends BaseRecyclerFragment impl
 	}
 
 	@Override
-	public void onLoadFinished(Loader<LoaderResult<ArrayList<ExtendedHashMap>>> loader,
+	public void onLoadFinished(@NonNull Loader<LoaderResult<ArrayList<ExtendedHashMap>>> loader,
 							   LoaderResult<ArrayList<ExtendedHashMap>> result) {
 		mHttpHelper.onLoadFinished();
 		mMapList.clear();
@@ -320,7 +311,7 @@ public abstract class BaseHttpRecyclerFragment extends BaseRecyclerFragment impl
 	}
 
 	@Override
-	public void onLoaderReset(Loader<LoaderResult<ArrayList<ExtendedHashMap>>> loader) {
+	public void onLoaderReset(@NonNull Loader<LoaderResult<ArrayList<ExtendedHashMap>>> loader) {
 	}
 
 	public SimpleHttpClient getHttpClient() {

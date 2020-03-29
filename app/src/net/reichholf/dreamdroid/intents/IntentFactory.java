@@ -1,5 +1,5 @@
 /* © 2010 Stephan Reichholf <stephan at reichholf dot net>
- * 
+ *
  * Licensed under the Create-Commons Attribution-Noncommercial-Share Alike 3.0 Unported
  * http://creativecommons.org/licenses/by-nc-sa/3.0/
  */
@@ -10,7 +10,6 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -70,8 +69,8 @@ public class IntentFactory {
 		intent.putExtra("serviceRef", ref);
 		if(bouquetRef != null)
 			intent.putExtra("bouquetRef", bouquetRef);
-		if(serviceInfo != null)
-			intent.putExtra("serviceInfo", (Parcelable) serviceInfo);
+		if(serviceInfo != null && PreferenceManager.getDefaultSharedPreferences(context).getBoolean(DreamDroid.PREFS_KEY_INTEGRATED_PLAYER, true))
+			intent.putExtra("serviceInfo", serviceInfo);
 		return intent;
 	}
 
@@ -80,6 +79,8 @@ public class IntentFactory {
 		Log.i(DreamDroid.LOG_TAG, "File-Streaming URL set to '" + uriString + "'");
 		Intent intent = getVideoIntent(context, uriString);
 		intent.putExtra("title", title);
+		if(fileInfo != null && PreferenceManager.getDefaultSharedPreferences(context).getBoolean(DreamDroid.PREFS_KEY_INTEGRATED_PLAYER, true))
+			intent.putExtra("serviceInfo", fileInfo);
 		return intent;
 	}
 }

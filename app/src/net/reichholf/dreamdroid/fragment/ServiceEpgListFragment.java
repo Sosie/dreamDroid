@@ -7,7 +7,8 @@
 package net.reichholf.dreamdroid.fragment;
 
 import android.os.Bundle;
-import android.support.v4.content.Loader;
+import androidx.annotation.NonNull;
+import androidx.loader.content.Loader;
 
 import net.reichholf.dreamdroid.R;
 import net.reichholf.dreamdroid.adapter.recyclerview.SimpleTextAdapter;
@@ -75,6 +76,7 @@ public class ServiceEpgListFragment extends BaseHttpRecyclerEventFragment {
 		return getBaseTitle() + " - " + mName;
 	}
 
+	@NonNull
 	@Override
 	public Loader<LoaderResult<ArrayList<ExtendedHashMap>>> onCreateLoader(int id, Bundle args) {
 		return new AsyncListLoader(getAppCompatActivity(), new EventListRequestHandler(), false, args);

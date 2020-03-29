@@ -3,10 +3,11 @@ package net.reichholf.dreamdroid.fragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.ViewPager;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,7 +49,7 @@ public class VirtualRemotePagerFragment extends BaseHttpFragment {
 
 		@Override
 		public Fragment getItem(int i) {
-			return (Fragment) mItems.get(mItems.keySet().toArray()[i]);
+			return (Fragment) mItems.get((String)mItems.keySet().toArray()[i]);
 		}
 
 		@Override
@@ -64,22 +65,19 @@ public class VirtualRemotePagerFragment extends BaseHttpFragment {
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.virtual_remote_pager, container, false);
 
-		mPager = (ViewPager) view.findViewById(R.id.pager);
+		mPager = view.findViewById(R.id.pager);
 		mPagerAdapter = new RemotePagerAdapter(getChildFragmentManager());
 		mPager.setAdapter(mPagerAdapter);
 
-		ImageButton toggle = (ImageButton) view.findViewById(R.id.toggle_remote);
-		toggle.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (mPager.getCurrentItem() == 0)
-					mPager.setCurrentItem(1);
-				else
-					mPager.setCurrentItem(0);
-			}
+		ImageButton toggle = view.findViewById(R.id.toggle_remote);
+		toggle.setOnClickListener(v -> {
+			if (mPager.getCurrentItem() == 0)
+				mPager.setCurrentItem(1);
+			else
+				mPager.setCurrentItem(0);
 		});
 
 		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getAppCompatActivity());

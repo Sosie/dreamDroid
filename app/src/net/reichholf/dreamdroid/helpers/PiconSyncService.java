@@ -5,9 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
-import android.support.v7.preference.PreferenceManager;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.preference.PreferenceManager;
 import android.util.Log;
 
 import net.reichholf.dreamdroid.DreamDroid;
@@ -15,10 +15,15 @@ import net.reichholf.dreamdroid.Profile;
 import net.reichholf.dreamdroid.R;
 import net.reichholf.dreamdroid.helpers.enigma2.Picon;
 
-import java.io.File;
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPClientConfig;
+import org.apache.commons.net.ftp.FTPFile;
+import org.apache.commons.net.ftp.FTPFileFilter;
 
-import it.sauronsoftware.ftp4j.FTPClient;
-import it.sauronsoftware.ftp4j.FTPFile;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 
 /**
  * Created by Stephan on 05.02.2016.
@@ -77,6 +82,7 @@ public class PiconSyncService extends IntentService {
 		String remotePath = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).getString(DreamDroid.PREFS_KEY_SYNC_PICONS_PATH, "/usr/share/enigma2/picon");
 		Log.i(TAG, String.format("Syncing from %s to %s", remotePath, localPath));
 		FTPClient client = new FTPClient();
+		FTPClientConfig config = new FTPClientConfig();
 		Profile p = DreamDroid.getCurrentProfile();
 		try {
 			// Check for the required directories
@@ -94,16 +100,17 @@ public class PiconSyncService extends IntentService {
 			client.login(p.getUser(), p.getPass());
 			publishProgress(DownloadProgress.EVENT_ID_LOGIN_SUCCEEDED);
 
-			client.setType(FTPClient.TYPE_BINARY);
+			client.setFileType(FTPClient.BINARY_FILE_TYPE);
 			Log.i(TAG, String.format("Changing to %s", remotePath));
-			client.changeDirectory(remotePath);
+			client.changeWorkingDirectory(remotePath);
 			publishProgress(DownloadProgress.EVENT_ID_LISTING);
 
-			FTPFile[] fileList = client.list("*.png");
+			FTPFileFilter filter = file -> file.isFile() && file.getName().endsWith(".png");
+			FTPFile[] fileList = client.listFiles(null, filter);
 			mDownloadProgress.totalFiles = fileList.length;
 			publishProgress(DownloadProgress.EVENT_ID_LISTING_READY);
 			for (FTPFile remoteFile : fileList) {
-				if (remoteFile.getType() != FTPFile.TYPE_FILE)
+				if (!remoteFile.isFile())
 					continue;
 				String fileName = remoteFile.getName();
 
@@ -112,13 +119,14 @@ public class PiconSyncService extends IntentService {
 
 				File localFile = new File(String.format("%s%s", localPath, fileName));
 				localFile.createNewFile();
-
+				OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(localFile));
 				try {
-					client.download(fileName, localFile);
+					client.retrieveFile(fileName, outputStream);
 				} catch (Exception e) {
 					e.printStackTrace();
 					Log.e(TAG, "Failed to download picon with filename " + fileName);
 				}
+				outputStream.close();
 				mDownloadProgress.downloadedFiles++;
 			}
 
@@ -134,7 +142,7 @@ public class PiconSyncService extends IntentService {
 	public void initNotifications() {
 		Context context = getApplicationContext();
 		mNotifyManager = NotificationManagerCompat.from(context);
-		mNotificationBuilder = new NotificationCompat.Builder(context);
+		mNotificationBuilder = new NotificationCompat.Builder(context, "dreamdroid_picon_sync");
 
 		Bitmap bm = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher);
 		mNotificationBuilder.setContentTitle(context.getString(R.string.sync_picons))

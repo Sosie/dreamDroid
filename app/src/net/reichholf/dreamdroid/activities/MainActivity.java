@@ -9,24 +9,22 @@ package net.reichholf.dreamdroid.activities;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -34,6 +32,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import net.reichholf.dreamdroid.BuildConfig;
 import net.reichholf.dreamdroid.DreamDroid;
 import net.reichholf.dreamdroid.Profile;
 import net.reichholf.dreamdroid.ProfileChangedListener;
@@ -46,6 +45,7 @@ import net.reichholf.dreamdroid.fragment.EpgSearchFragment;
 import net.reichholf.dreamdroid.fragment.ProfileEditFragment;
 import net.reichholf.dreamdroid.fragment.ProfileListFragment;
 import net.reichholf.dreamdroid.fragment.dialogs.ActionDialog;
+import net.reichholf.dreamdroid.fragment.dialogs.ChangelogDialog;
 import net.reichholf.dreamdroid.fragment.dialogs.ConnectionErrorDialog;
 import net.reichholf.dreamdroid.fragment.dialogs.MultiChoiceDialog;
 import net.reichholf.dreamdroid.fragment.dialogs.PositiveNegativeDialog;
@@ -57,13 +57,8 @@ import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
 import net.reichholf.dreamdroid.helpers.Statics;
 import net.reichholf.dreamdroid.helpers.enigma2.CheckProfile;
 
-import org.piwik.sdk.PiwikApplication;
-import org.piwik.sdk.TrackHelper;
-
 import java.util.Arrays;
 import java.util.List;
-
-import de.cketti.library.changelog.ChangeLog;
 
 /**
  * @author sre
@@ -124,12 +119,7 @@ public class MainActivity extends BaseActivity implements MultiPaneHandler, Prof
 			setConnectionState(error, true);
 			dismissSnackbar();
 			mSnackbar = Snackbar.make(findViewById(R.id.drawer_layout), error, Snackbar.LENGTH_INDEFINITE)
-					.setAction(R.string.more, new View.OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							showErrorDetails(result);
-						}
-					});
+					.setAction(R.string.more, v -> showErrorDetails(result));
 			mSnackbar.show();
 		} else {
 			dismissSnackbar();
@@ -148,7 +138,7 @@ public class MainActivity extends BaseActivity implements MultiPaneHandler, Prof
 		if (isFirstStart) {
 			if (!isNavigationDrawerVisible())
 				toggle();
-			sp.edit().putBoolean(DreamDroid.PREFS_KEY_FIRST_START, false).commit();
+			sp.edit().putBoolean(DreamDroid.PREFS_KEY_FIRST_START, false).apply();
 		}
 	}
 
@@ -172,23 +162,25 @@ public class MainActivity extends BaseActivity implements MultiPaneHandler, Prof
 		mCurrentProfile = Profile.getDefault();
 		initViews();
 		DreamDroid.setCurrentProfileChangedListener(this);
-		showChangeLogIfNeeded(true);
+		showChangeLog(true);
 	}
 
 	/**
 	 * open the change log dialog
 	 *
-	 * @param onlyOnFirstTime if this is true, the change log will only displayed if it is the first time.
+	 * @param onUpdateOnly if this is true, the change log will only displayed if the app has been updated
 	 */
-	public void showChangeLogIfNeeded(boolean onlyOnFirstTime) {
-		ChangeLog cl = new ChangeLog(this);
-		if (onlyOnFirstTime) {
-			if (cl.isFirstRun()) {
-				cl.getFullLogDialog().show();
-			}
-		} else {
-			cl.getFullLogDialog().show();
+	public void showChangeLog(boolean onUpdateOnly) {
+		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+		int lastVersionCode = preferences.getInt(DreamDroid.PREFS_KEY_LAST_VERSION_CODE, 0);
+		boolean updated = lastVersionCode < BuildConfig.VERSION_CODE;
+		if (updated) {
+			SharedPreferences.Editor editor = preferences.edit();
+			editor.putInt(DreamDroid.PREFS_KEY_LAST_VERSION_CODE, BuildConfig.VERSION_CODE);
+			editor.apply();
 		}
+		if (updated || !onUpdateOnly)
+			showDialogFragment(ChangelogDialog.newInstance(), "changelog_dialog");
 	}
 
 	@Override
@@ -250,12 +242,13 @@ public class MainActivity extends BaseActivity implements MultiPaneHandler, Prof
 		super.onCreateOptionsMenu(menu);
 
 		getMenuInflater().inflate(R.menu.search, menu);
-		MenuItem searchItem = menu.findItem(R.id.action_search);
 
-		MenuItemCompat.expandActionView(searchItem);
-		MenuItemCompat.collapseActionView(searchItem);
-
-		SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+		// Get the SearchView and set the searchable configuration
+		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+		SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+		// Assumes current activity is the searchable activity
+		searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+		searchView.setIconifiedByDefault(false);
 		if (searchView == null) { //WAIT, WHAT?
 			Log.w(TAG, "This is just wrong, there is no searchView?!");
 			return true;
@@ -274,7 +267,7 @@ public class MainActivity extends BaseActivity implements MultiPaneHandler, Prof
 
 	private void initViews() {
 		setContentView(R.layout.dualpane);
-		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -284,7 +277,7 @@ public class MainActivity extends BaseActivity implements MultiPaneHandler, Prof
 			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 			getSupportActionBar().setHomeButtonEnabled(true);
 
-			mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+			mDrawerLayout = findViewById(R.id.drawer_layout);
 			mDrawerToggle = new ActionBarDrawerToggle(this, /* host Activity */
 					mDrawerLayout, /* DrawerLayout object */
 					R.string.drawer_open, /* "open drawer" description for accessibility */
@@ -317,18 +310,15 @@ public class MainActivity extends BaseActivity implements MultiPaneHandler, Prof
 			};
 			mDrawerLayout.addDrawerListener(mDrawerToggle);
 
-			NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+			NavigationView navigationView = findViewById(R.id.navigation_view);
 			View navHeader = navigationView.getHeaderView(0);
 			View profileChooser = navHeader.findViewById(R.id.drawer_profile);
-			profileChooser.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View view) {
-					checkNavigationHelper();
-					mNavigationHelper.navigateTo(R.id.menu_navigation_profiles);
-				}
+			profileChooser.setOnClickListener(view -> {
+				checkNavigationHelper();
+				mNavigationHelper.navigateTo(R.id.menu_navigation_profiles);
 			});
-			mActiveProfile = (TextView) navHeader.findViewById(R.id.drawer_profile_name);
-			mConnectionState = (TextView) navHeader.findViewById(R.id.drawer_profile_status);
+			mActiveProfile = navHeader.findViewById(R.id.drawer_profile_name);
+			mConnectionState = navHeader.findViewById(R.id.drawer_profile_status);
 		} else {
 			getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 		}
@@ -351,7 +341,7 @@ public class MainActivity extends BaseActivity implements MultiPaneHandler, Prof
 
 	@Override
 	public void setTitle(CharSequence title) {
-		TextView titleView = (TextView) findViewById(R.id.toolbar_title);
+		TextView titleView = findViewById(R.id.toolbar_title);
 		if (titleView != null) {
 			titleView.setText(title);
 			super.setTitle("");
@@ -366,8 +356,6 @@ public class MainActivity extends BaseActivity implements MultiPaneHandler, Prof
 			if (mDetailFragment != null && !fragment.isVisible()) {
 				ft.hide(mDetailFragment);
 			}
-			if (DreamDroid.isTrackingEnabled(this) && !fragment.isVisible())
-				TrackHelper.track().screen("/" + fragment.getClass().getSimpleName()).title(fragment.getClass().getSimpleName()).with((PiwikApplication) getApplication());
 			ft.show(fragment);
 		} else {
 			Log.i(TAG, "Fragment " + ((Object) fragment).getClass().getSimpleName() + " not added, adding");
@@ -524,9 +512,9 @@ public class MainActivity extends BaseActivity implements MultiPaneHandler, Prof
 				&& mDetailFragment.isVisible()
 				&& PreferenceManager.getDefaultSharedPreferences(this).getBoolean(
 				DreamDroid.PREFS_KEY_ENABLE_ANIMATIONS, true))
-			ft.setCustomAnimations(R.anim.activity_open_translate, R.anim.activity_close_scale, R.anim.activity_open_scale, R.anim.activity_close_translate);
+			ft.setCustomAnimations(R.animator.activity_open_translate, R.animator.activity_close_scale, R.animator.activity_open_scale, R.animator.activity_close_translate);
 
-		AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
+		AppBarLayout appBarLayout = findViewById(R.id.appbar);
 		if (appBarLayout != null)
 			appBarLayout.setExpanded(true, true);
 		showFragment(ft, R.id.detail_view, fragment);
@@ -537,7 +525,7 @@ public class MainActivity extends BaseActivity implements MultiPaneHandler, Prof
 	}
 
 	public void unregisterFab(int id) {
-		FloatingActionButton fab = (FloatingActionButton) findViewById(id);
+		FloatingActionButton fab = findViewById(id);
 		if (fab == null)
 			return;
 		fab.setOnClickListener(null);
@@ -599,7 +587,7 @@ public class MainActivity extends BaseActivity implements MultiPaneHandler, Prof
 
 	@Override
 	public void onFragmentResume(Fragment fragment) {
-		if (!fragment.equals(mNavigationHelper) && !fragment.equals(mDetailFragment)) {
+		if (!fragment.equals(mDetailFragment)) {
 			mDetailFragment = fragment;
 			showDetails(fragment);
 		}
@@ -637,7 +625,7 @@ public class MainActivity extends BaseActivity implements MultiPaneHandler, Prof
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see net.reichholf.dreamdroid.fragment.dialogs.EpgDetailDialog.
+	 * @see net.reichholf.dreamdroid.fragment.dialogs.EpgDetailBottomSheet.
 	 * EpgDetailDialogListener#onFinishEpgDetailDialog(int)
 	 */
 	@Override

@@ -1,8 +1,9 @@
 package net.reichholf.dreamdroid.adapter.recyclerview;
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,17 +29,20 @@ public class ProfileAdapter extends BaseAdapter<ProfileAdapter.ProfileViewHolder
 		mActiveColor = ContextCompat.getColor(context, R.color.active_profile_color);
 	}
 
+	@NonNull
 	@Override
-	public ProfileViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+	public ProfileViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 		LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 		View itemView = inflater.inflate(R.layout.two_line_card_list_item, parent, false);
 		return new ProfileViewHolder(itemView);
 	}
 
 	@Override
-	public void onBindViewHolder(ProfileViewHolder holder, int position) {
+	public void onBindViewHolder(@NonNull ProfileViewHolder holder, int position) {
 		ExtendedHashMap ehm = mData.get(position);
 		Boolean isActive = (Boolean) ehm.get(ProfileListFragment.KEY_ACTIVE_PROFILE);
+		if (isActive == null)
+			isActive = false;
 
 		String profile = ehm.getString(DatabaseHelper.KEY_PROFILE_PROFILE);
 		String host = ehm.getString(DatabaseHelper.KEY_PROFILE_HOST);
@@ -61,9 +65,9 @@ public class ProfileAdapter extends BaseAdapter<ProfileAdapter.ProfileViewHolder
 
 		public ProfileViewHolder(View itemView) {
 			super(itemView);
-			text1 = (TextView) itemView.findViewById(android.R.id.text1);
-			text2 = (TextView) itemView.findViewById(android.R.id.text2);
-			indicator = (TextView) itemView.findViewById(R.id.activeIndicator);
+			text1 = itemView.findViewById(android.R.id.text1);
+			text2 = itemView.findViewById(android.R.id.text2);
+			indicator = itemView.findViewById(R.id.activeIndicator);
 		}
 	}
 }

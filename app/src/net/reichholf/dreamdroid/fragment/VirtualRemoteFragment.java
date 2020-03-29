@@ -12,14 +12,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 
 import net.reichholf.dreamdroid.DreamDroid;
@@ -86,7 +85,7 @@ public class VirtualRemoteFragment extends BaseHttpFragment {
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = getRemoteView();
 
 		if(view.findViewById(R.id.screenshot_frame) != null){
@@ -105,10 +104,8 @@ public class VirtualRemoteFragment extends BaseHttpFragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(mScreenshotFragment != null)
-            return mScreenshotFragment.onOptionsItemSelected(item);
-        return false;
-    }
+		return mScreenshotFragment != null && mScreenshotFragment.onOptionsItemSelected(item);
+	}
 
 	@Override
 	public void onPause(){
@@ -165,20 +162,12 @@ public class VirtualRemoteFragment extends BaseHttpFragment {
 	protected void registerOnClickListener(View v, final int id) {
 		v.setLongClickable(true);
 
-		v.setOnLongClickListener(new OnLongClickListener() {
-			@Override
-			public boolean onLongClick(View v) {
-				onButtonClicked(id, true);
-				return true;
-			}
+		v.setOnLongClickListener(v12 -> {
+			onButtonClicked(id, true);
+			return true;
 		});
 
-		v.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				onButtonClicked(id, false);
-			}
-		});
+		v.setOnClickListener(v1 -> onButtonClicked(id, false));
 	}
 
 	/**
@@ -221,13 +210,10 @@ public class VirtualRemoteFragment extends BaseHttpFragment {
 		if(mScreenshotFragment == null || !mScreenshotFragment.isVisible() || mScreenShotCallback != null)
 			return;
 
-		mScreenShotCallback = new Runnable() {
-			@Override
-			public void run() {
-				Log.w(TAG, "Reloading screenshot");
-				mScreenshotFragment.reload();
-                mScreenShotCallback = null;
-			}
+		mScreenShotCallback = () -> {
+			Log.w(TAG, "Reloading screenshot");
+			mScreenshotFragment.reload();
+mScreenShotCallback = null;
 		};
 		mHandler.postDelayed(mScreenShotCallback, 700);
 	}

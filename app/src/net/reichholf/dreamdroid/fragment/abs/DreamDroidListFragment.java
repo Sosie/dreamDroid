@@ -8,11 +8,12 @@ package net.reichholf.dreamdroid.fragment.abs;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ListFragment;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.ActionMode;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.fragment.app.ListFragment;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -96,14 +97,14 @@ public abstract class DreamDroidListFragment extends ListFragment implements Act
 	}
 
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
+	public void onSaveInstanceState(@NonNull Bundle outState) {
 		mHelper.onSaveInstanceState(outState);
 		super.onSaveInstanceState(outState);
 	}
 
 	@Override
 	public void setEmptyText(CharSequence text) {
-		TextView emptyView = (TextView) getView().findViewById(android.R.id.empty);
+		TextView emptyView = getView().findViewById(android.R.id.empty);
 		if (emptyView != null)
 			emptyView.setText(text);
 		else
@@ -140,7 +141,7 @@ public abstract class DreamDroidListFragment extends ListFragment implements Act
 	}
 
 	@Override
-	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		setViewVisible(R.id.fab_reload, mHasFabReload);
 		setViewVisible(R.id.fab_main, mHasFabMain);
@@ -212,7 +213,7 @@ public abstract class DreamDroidListFragment extends ListFragment implements Act
 	}
 
 	protected void registerFab(int id, View view, int descriptionId, int backgroundResId, View.OnClickListener onClickListener, AbsListView listView, boolean topAligned) {
-		FloatingActionButton fab = (FloatingActionButton) getAppCompatActivity().findViewById(id);
+		FloatingActionButton fab = getAppCompatActivity().findViewById(id);
 		if (fab == null)
 			return;
 
@@ -220,12 +221,9 @@ public abstract class DreamDroidListFragment extends ListFragment implements Act
 		fab.setImageResource(backgroundResId);
 
 		fab.setOnClickListener(onClickListener);
-		fab.setOnLongClickListener(new View.OnLongClickListener() {
-			@Override
-			public boolean onLongClick(View v) {
-				Toast.makeText(getAppCompatActivity(), v.getContentDescription(), Toast.LENGTH_SHORT).show();
-				return true;
-			}
+		fab.setOnLongClickListener(v -> {
+			Toast.makeText(getAppCompatActivity(), v.getContentDescription(), Toast.LENGTH_SHORT).show();
+			return true;
 		});
 	}
 

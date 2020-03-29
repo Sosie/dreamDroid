@@ -7,7 +7,8 @@
 package net.reichholf.dreamdroid.fragment;
 
 import android.os.Bundle;
-import android.support.v4.content.Loader;
+import androidx.annotation.NonNull;
+import androidx.loader.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,32 +50,27 @@ public class DeviceInfoFragment extends BaseHttpFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		initTitles(getString(R.string.device_info));
-
-		if (savedInstanceState != null) {
-			mInfo = savedInstanceState.getParcelable("info");
-		} else {
-			mInfo = new ExtendedHashMap();
-		}
+		mInfo = new ExtendedHashMap();
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		mFrontends = new ArrayList<>();
 		mNics = new ArrayList<>();
 		mHdds = new ArrayList<>();
 
-		mInflater = getLayoutInflater(savedInstanceState);
+		mInflater = getLayoutInflater();
 		View view = mInflater.inflate(R.layout.device_info, null);
 
-		mGuiVersion = (TextView) view.findViewById(R.id.GuiVersion);
-		mImageVersion = (TextView) view.findViewById(R.id.ImageVersion);
-		mInterfaceVersion = (TextView) view.findViewById(R.id.InterfaceVersion);
-		mFrontprocessorVersion = (TextView) view.findViewById(R.id.FrontprocessorVersion);
-		mDeviceName = (TextView) view.findViewById(R.id.DeviceName);
+		mGuiVersion = view.findViewById(R.id.GuiVersion);
+		mImageVersion = view.findViewById(R.id.ImageVersion);
+		mInterfaceVersion = view.findViewById(R.id.InterfaceVersion);
+		mFrontprocessorVersion = view.findViewById(R.id.FrontprocessorVersion);
+		mDeviceName = view.findViewById(R.id.DeviceName);
 		
-		mFrontendsList = (LinearLayout) view.findViewById(R.id.FrontendsList);
-		mNicsList = (LinearLayout) view.findViewById(R.id.NicsList);
-		mHddsList = (LinearLayout) view.findViewById(R.id.HddsList);
+		mFrontendsList = view.findViewById(R.id.FrontendsList);
+		mNicsList = view.findViewById(R.id.NicsList);
+		mHddsList = view.findViewById(R.id.HddsList);
 
 		if (mInfo == null || mInfo.isEmpty()) {
 			mReload = true;
@@ -83,11 +79,6 @@ public class DeviceInfoFragment extends BaseHttpFragment {
 		}
 
 		return view;
-	}
-
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		outState.putParcelable("info", mInfo);
 	}
 
 	/**
@@ -103,10 +94,10 @@ public class DeviceInfoFragment extends BaseHttpFragment {
 		for (int i=0; i<mFrontends.size(); i++) {
 			View item = mInflater.inflate(R.layout.two_line_list_item, null);
 			
-			TextView title = (TextView) item.findViewById(android.R.id.text1);
+			TextView title = item.findViewById(android.R.id.text1);
 			title.setText((String) mFrontends.get(i).get(DeviceInfo.KEY_FRONTEND_NAME));
 			
-			TextView desc = (TextView) item.findViewById(android.R.id.text2);
+			TextView desc = item.findViewById(android.R.id.text2);
 			desc.setText((String) mFrontends.get(i).get(DeviceInfo.KEY_FRONTEND_MODEL));
 			
 			mFrontendsList.addView(item);
@@ -120,10 +111,10 @@ public class DeviceInfoFragment extends BaseHttpFragment {
 		for (int i=0; i<mNics.size(); i++) {
 			View item = mInflater.inflate(R.layout.two_line_list_item, null);
 			
-			TextView title = (TextView) item.findViewById(android.R.id.text1);
+			TextView title = item.findViewById(android.R.id.text1);
 			title.setText((String) mNics.get(i).get(DeviceInfo.KEY_NIC_NAME));
 			
-			TextView desc = (TextView) item.findViewById(android.R.id.text2);
+			TextView desc = item.findViewById(android.R.id.text2);
 			desc.setText((String) mNics.get(i).get(DeviceInfo.KEY_NIC_IP));
 			
 			mNicsList.addView(item);
@@ -137,10 +128,10 @@ public class DeviceInfoFragment extends BaseHttpFragment {
 		for (int i=0; i<mHdds.size(); i++) {
 			View item = mInflater.inflate(R.layout.two_line_list_item, null);
 			
-			TextView title = (TextView) item.findViewById(android.R.id.text1);
+			TextView title = item.findViewById(android.R.id.text1);
 			title.setText((String) mHdds.get(i).get(DeviceInfo.KEY_HDD_MODEL));
 			
-			TextView desc = (TextView) item.findViewById(android.R.id.text2);
+			TextView desc = item.findViewById(android.R.id.text2);
 			desc.setText(String.format(getString(R.string.hdd_capacity),
 					mHdds.get(i).get(DeviceInfo.KEY_HDD_CAPACITY),
 					mHdds.get(i).get(DeviceInfo.KEY_HDD_FREE_SPACE)));
@@ -155,6 +146,7 @@ public class DeviceInfoFragment extends BaseHttpFragment {
 		mDeviceName.setText(mInfo.getString(DeviceInfo.KEY_DEVICE_NAME));
 	}
 
+	@NonNull
 	@Override
 	public Loader<LoaderResult<ExtendedHashMap>> onCreateLoader(int id, Bundle args) {
 		return new AsyncSimpleLoader(getAppCompatActivity(), new DeviceInfoRequestHandler(), args);

@@ -7,7 +7,8 @@
 package net.reichholf.dreamdroid.adapter.recyclerview;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,15 +42,16 @@ public class TimerAdapter extends BaseAdapter<TimerAdapter.TimerViewHolder> {
 		mStateColor = context.getResources().getIntArray(R.array.timer_state_color);
 	}
 
+	@NonNull
 	@Override
-	public TimerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+	public TimerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 		LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 		View itemView = inflater.inflate(R.layout.timer_list_item, parent, false);
 		return new TimerViewHolder(itemView);
 	}
 
 	@Override
-	public void onBindViewHolder(TimerViewHolder holder, int position) {
+	public void onBindViewHolder(@NonNull TimerViewHolder holder, int position) {
 		ExtendedHashMap timer = mData.get(position);
 		if (timer != null) {
 			holder.name.setText(timer.getString(Timer.KEY_NAME));
@@ -89,13 +91,13 @@ public class TimerAdapter extends BaseAdapter<TimerAdapter.TimerViewHolder> {
 
 		public TimerViewHolder(View itemView){
 			super(itemView);
-			name = (TextView) itemView.findViewById(R.id.timer_name);
-			service = (TextView) itemView.findViewById(R.id.service_name);
-			begin = (TextView) itemView.findViewById(R.id.timer_start);
-			end = (TextView) itemView.findViewById(R.id.timer_end);
-			action = (TextView) itemView.findViewById(R.id.timer_action);
-			state = (TextView) itemView.findViewById(R.id.timer_state);
-			stateIndicator = (TextView) itemView.findViewById(R.id.timer_state_indicator);
+			name = itemView.findViewById(R.id.timer_name);
+			service = itemView.findViewById(R.id.service_name);
+			begin = itemView.findViewById(R.id.timer_start);
+			end = itemView.findViewById(R.id.timer_end);
+			action = itemView.findViewById(R.id.timer_action);
+			state = itemView.findViewById(R.id.timer_state);
+			stateIndicator = itemView.findViewById(R.id.timer_state_indicator);
 		}
 	}
 }

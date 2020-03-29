@@ -8,10 +8,13 @@ package net.reichholf.dreamdroid.fragment.abs;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.livefront.bridge.Bridge;
+
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
@@ -46,6 +49,7 @@ public abstract class BaseFragment extends Fragment implements ActivityCallbackH
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Bridge.restoreInstanceState(this, savedInstanceState);
 		if (mHelper == null)
 			mHelper = new FragmentHelper(this);
 		else
@@ -56,14 +60,14 @@ public abstract class BaseFragment extends Fragment implements ActivityCallbackH
 	}
 
 	@Override
-	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		setFabEnabled(R.id.fab_reload, mHasFabReload);
 		setFabEnabled(R.id.fab_main, mHasFabMain);
 	}
 
 	protected void setFabEnabled(int id, boolean enabled) {
-		FloatingActionButton fab = (FloatingActionButton) getAppCompatActivity().findViewById(id);
+		FloatingActionButton fab = getAppCompatActivity().findViewById(id);
 		if(fab == null)
 			return;
 		fab.setTag(R.id.fab_scrolling_view_behavior_enabled, enabled);
@@ -95,9 +99,16 @@ public abstract class BaseFragment extends Fragment implements ActivityCallbackH
 	}
 
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
+	public void onSaveInstanceState(@NonNull Bundle outState) {
 		mHelper.onSaveInstanceState(outState);
 		super.onSaveInstanceState(outState);
+		Bridge.saveInstanceState(this, outState);
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		Bridge.clear(this);
 	}
 
 	@Override
@@ -176,7 +187,7 @@ public abstract class BaseFragment extends Fragment implements ActivityCallbackH
 	}
 
 	protected void registerFab(int id, int descriptionId, int backgroundResId, View.OnClickListener onClickListener) {
-		FloatingActionButton fab = (FloatingActionButton) getAppCompatActivity().findViewById(id);
+		FloatingActionButton fab = getAppCompatActivity().findViewById(id);
 		if (fab == null)
 			return;
 
@@ -185,12 +196,9 @@ public abstract class BaseFragment extends Fragment implements ActivityCallbackH
 		fab.setContentDescription(getString(descriptionId));
 		fab.setImageResource(backgroundResId);
 		fab.setOnClickListener(onClickListener);
-		fab.setOnLongClickListener(new View.OnLongClickListener() {
-			@Override
-			public boolean onLongClick(View v) {
-				Toast.makeText(getAppCompatActivity(), v.getContentDescription(), Toast.LENGTH_SHORT).show();
-				return true;
-			}
+		fab.setOnLongClickListener(v -> {
+			Toast.makeText(getAppCompatActivity(), v.getContentDescription(), Toast.LENGTH_SHORT).show();
+			return true;
 		});
 	}
 

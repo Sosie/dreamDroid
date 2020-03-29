@@ -4,7 +4,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.v4.app.NotificationCompat;
+import androidx.core.app.NotificationCompat;
 import android.util.Log;
 
 import net.reichholf.dreamdroid.DatabaseHelper;
@@ -34,7 +34,7 @@ public class EpgDatabase {
     public void syncBouquet(Context context, String reference){
         mNotifyManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        mBuilder = new NotificationCompat.Builder(context);
+        mBuilder = new NotificationCompat.Builder(context, "dreamdroid_picon_sync");
 
         Bitmap bm = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher);
         mBuilder.setContentTitle(context.getString(R.string.epg_sync))

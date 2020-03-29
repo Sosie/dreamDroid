@@ -19,8 +19,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -32,7 +30,7 @@ import net.reichholf.dreamdroid.fragment.abs.BaseFragment;
 import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
 import net.reichholf.dreamdroid.helpers.Statics;
 
-import java.util.HashMap;
+import androidx.annotation.NonNull;
 
 import static net.reichholf.dreamdroid.fragment.abs.BaseHttpFragment.sData;
 
@@ -81,40 +79,40 @@ public class ProfileEditFragment extends BaseFragment {
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.profile_edit, container, false);
 
-		mProfile = (EditText) view.findViewById(R.id.EditTextProfile);
-		mHost = (EditText) view.findViewById(R.id.EditTextHost);
-		mStreamHost = (EditText) view.findViewById(R.id.EditTextStreamHost);
-		mPort = (EditText) view.findViewById(R.id.EditTextPort);
-		mStreamPort = (EditText) view.findViewById(R.id.EditTextStreamPort);
-		mFilePort = (EditText) view.findViewById(R.id.EditTextFilePort);
-		mSsl = (CheckBox) view.findViewById(R.id.CheckBoxSsl);
-		mLogin = (CheckBox) view.findViewById(R.id.CheckBoxLogin);
-		mStreamLogin = (CheckBox) view.findViewById(R.id.CheckBoxLoginStream);
-		mUser = (EditText) view.findViewById(R.id.EditTextUser);
-		mPass = (EditText) view.findViewById(R.id.EditTextPass);
-		mSimpleRemote = (CheckBox) view.findViewById(R.id.CheckBoxSimpleRemote);
-		mFileSsl = (CheckBox) view.findViewById(R.id.CheckBoxSslFileStream);
-		mFileLogin = (CheckBox) view.findViewById(R.id.CheckBoxLoginFileStream);
+		mProfile = view.findViewById(R.id.EditTextProfile);
+		mHost = view.findViewById(R.id.EditTextHost);
+		mStreamHost = view.findViewById(R.id.EditTextStreamHost);
+		mPort = view.findViewById(R.id.EditTextPort);
+		mStreamPort = view.findViewById(R.id.EditTextStreamPort);
+		mFilePort = view.findViewById(R.id.EditTextFilePort);
+		mSsl = view.findViewById(R.id.CheckBoxSsl);
+		mLogin = view.findViewById(R.id.CheckBoxLogin);
+		mStreamLogin = view.findViewById(R.id.CheckBoxLoginStream);
+		mUser = view.findViewById(R.id.EditTextUser);
+		mPass = view.findViewById(R.id.EditTextPass);
+		mSimpleRemote = view.findViewById(R.id.CheckBoxSimpleRemote);
+		mFileSsl = view.findViewById(R.id.CheckBoxSslFileStream);
+		mFileLogin = view.findViewById(R.id.CheckBoxLoginFileStream);
 
 		//Encoder
-		mEncoderStream = (CheckBox) view.findViewById(R.id.CheckBoxEncoder);
-		mEncoderPath = (EditText) view.findViewById(R.id.EditTextEncoderPath);
-		mEncoderPort = (EditText) view.findViewById(R.id.EditTextEncoderPort);
-		mEncoderLogin = (CheckBox) view.findViewById(R.id.CheckBoxEncoderLogin);
-		mEncoderUser = (EditText) view.findViewById(R.id.EditTextEncodermUser);
-		mEncoderPass = (EditText) view.findViewById(R.id.EditTextEncoderPass);
-		mEncoderVideoBitrate = (EditText) view.findViewById(R.id.EditTextVideoBitrate);
-		mEncoderAudioBitrate = (EditText) view.findViewById(R.id.EditTextAudioBitrate);
+		mEncoderStream = view.findViewById(R.id.CheckBoxEncoder);
+		mEncoderPath = view.findViewById(R.id.EditTextEncoderPath);
+		mEncoderPort = view.findViewById(R.id.EditTextEncoderPort);
+		mEncoderLogin = view.findViewById(R.id.CheckBoxEncoderLogin);
+		mEncoderUser = view.findViewById(R.id.EditTextEncodermUser);
+		mEncoderPass = view.findViewById(R.id.EditTextEncoderPass);
+		mEncoderVideoBitrate = view.findViewById(R.id.EditTextVideoBitrate);
+		mEncoderAudioBitrate = view.findViewById(R.id.EditTextAudioBitrate);
 
-		mLayoutEncoder = (LinearLayout) view.findViewById(R.id.linearLayoutEncoder);
-		mLayoutEncoderLogin = (LinearLayout) view.findViewById(R.id.linearLayoutEncoderLogin);
-		mLayoutStream = (LinearLayout) view.findViewById(R.id.linearLayoutStream);
-		mLayoutLogin = (LinearLayout) view.findViewById(R.id.LoginLayout);
+		mLayoutEncoder = view.findViewById(R.id.linearLayoutEncoder);
+		mLayoutEncoderLogin = view.findViewById(R.id.linearLayoutEncoderLogin);
+		mLayoutStream = view.findViewById(R.id.linearLayoutStream);
+		mLayoutLogin = view.findViewById(R.id.LoginLayout);
 
-		HashMap extras = (HashMap) getArguments().getSerializable(sData);
+		ExtendedHashMap extras = (ExtendedHashMap) getArguments().getSerializable(sData);
 		assert extras != null;
 
 		if (Intent.ACTION_EDIT.equals(extras.get("action"))) {
@@ -131,39 +129,14 @@ public class ProfileEditFragment extends BaseFragment {
 	}
 
 	private void registerListeners() {
-		mLogin.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton checkbox, boolean checked) {
-				onIsLoginChanged(checked);
-			}
-		});
+		mLogin.setOnCheckedChangeListener((checkbox, checked) -> onIsLoginChanged(checked));
 
-		mSsl.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton checkbox, boolean checked) {
-				onSslChanged(checked);
-			}
-		});
+		mSsl.setOnCheckedChangeListener((checkbox, checked) -> onSslChanged(checked));
 
-		mEncoderStream.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				onIsEncoderStreamChanged(isChecked);
-			}
-		});
+		mEncoderStream.setOnCheckedChangeListener((buttonView, isChecked) -> onIsEncoderStreamChanged(isChecked));
 
-		mEncoderLogin.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				onIsEncoderLoginChanged(isChecked);
-			}
-		});
-		registerFab(R.id.fab_main, R.string.save, R.drawable.ic_action_save, new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				save();
-			}
-		});
+		mEncoderLogin.setOnCheckedChangeListener((buttonView, isChecked) -> onIsEncoderLoginChanged(isChecked));
+		registerFab(R.id.fab_main, R.string.save, R.drawable.ic_action_save, v -> save());
 	}
 
 	@Override
@@ -245,12 +218,12 @@ public class ProfileEditFragment extends BaseFragment {
 
 		mEncoderStream.setChecked(mCurrentProfile.isEncoderStream());
 		mEncoderPath.setText(mCurrentProfile.getEncoderPath());
-		mEncoderPort.setText(String.valueOf(mCurrentProfile.getEncoderPort()));
+		mEncoderPort.setText(mCurrentProfile.getEncoderPortString());
 		mEncoderLogin.setChecked(mCurrentProfile.isEncoderLogin());
 		mEncoderUser.setText(mCurrentProfile.getEncoderUser());
 		mEncoderPass.setText(mCurrentProfile.getEncoderPass());
-		mEncoderVideoBitrate.setText(String.valueOf(mCurrentProfile.getEncoderVideoBitrate()));
-		mEncoderAudioBitrate.setText(String.valueOf(mCurrentProfile.getEncoderAudioBitrate()));
+		mEncoderVideoBitrate.setText(mCurrentProfile.getEncoderVideoBitrateString());
+		mEncoderAudioBitrate.setText(mCurrentProfile.getEncoderAudioBitrateString());
 	}
 
 	/**
@@ -273,12 +246,12 @@ public class ProfileEditFragment extends BaseFragment {
 		//Encoder
 		mCurrentProfile.setEncoderStream(mEncoderStream.isChecked());
 		mCurrentProfile.setEncoderPath(mEncoderPath.getText().toString());
-		mCurrentProfile.setEncoderPort(Integer.valueOf(mEncoderPort.getText().toString()));
+		mCurrentProfile.setEncoderPort(mEncoderPort.getText().toString());
 		mCurrentProfile.setEncoderLogin(mEncoderLogin.isChecked());
 		mCurrentProfile.setEncoderUser(mEncoderUser.getText().toString());
 		mCurrentProfile.setEncoderPass(mEncoderPass.getText().toString());
-		mCurrentProfile.setEncoderAudioBitrate(Integer.valueOf(mEncoderAudioBitrate.getText().toString()));
-		mCurrentProfile.setEncoderVideoBitrate(Integer.valueOf(mEncoderVideoBitrate.getText().toString()));
+		mCurrentProfile.setEncoderAudioBitrate(mEncoderAudioBitrate.getText().toString());
+		mCurrentProfile.setEncoderVideoBitrate(mEncoderVideoBitrate.getText().toString());
 
 
 		Context ctx = getContext();

@@ -1,7 +1,8 @@
 package net.reichholf.dreamdroid.adapter.recyclerview;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,8 +32,9 @@ public class ZapAdapter extends BaseAdapter<ZapAdapter.ZapViewHolder> {
 		mContext = context;
 	}
 
+	@NonNull
 	@Override
-	public ZapViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+	public ZapViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 		LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 		View itemView = inflater.inflate(R.layout.zap_grid_item, parent, false);
 		ZapViewHolder zvh = new ZapViewHolder(itemView);
@@ -41,7 +43,7 @@ public class ZapAdapter extends BaseAdapter<ZapAdapter.ZapViewHolder> {
 	}
 
 	@Override
-	public void onBindViewHolder(ZapViewHolder holder, int position) {
+	public void onBindViewHolder(@NonNull ZapViewHolder holder, int position) {
 		ExtendedHashMap service = mData.get(position);
 		if (service != null) {
 			holder.serviceName.setVisibility(View.VISIBLE);
@@ -57,16 +59,17 @@ public class ZapAdapter extends BaseAdapter<ZapAdapter.ZapViewHolder> {
 
 		public ZapViewHolder(View itemView) {
 			super(itemView);
-			picon = (ImageView) itemView.findViewById(R.id.picon);
-			serviceName = (TextView) itemView.findViewById(android.R.id.text1);
+			picon = itemView.findViewById(R.id.picon);
+			serviceName = itemView.findViewById(android.R.id.text1);
 			piconCallback = new Callback() {
 				@Override
 				public void onSuccess() {
 					serviceName.setVisibility(View.GONE);
 					picon.setVisibility(View.VISIBLE);
 				}
+
 				@Override
-				public void onError() {
+				public void onError(Exception e) {
 					Log.w(TAG, String.format("Error loading picon for %s", serviceName.getText()));
 					serviceName.setVisibility(View.VISIBLE);
 					picon.setVisibility(View.GONE);

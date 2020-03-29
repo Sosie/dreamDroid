@@ -12,12 +12,12 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import androidx.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -27,9 +27,8 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.evernote.android.state.State;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
-import com.wdullaer.materialdatetimepicker.date.DatePickerDialog.OnDateSetListener;
-import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
 import net.reichholf.dreamdroid.DreamDroid;
@@ -74,10 +73,10 @@ public class TimerEditFragment extends BaseHttpFragment implements MultiChoiceDi
 	private boolean[] mCheckedDays = {false, false, false, false, false, false, false};
 
 	private boolean mTagsChanged;
-	private ArrayList<String> mSelectedTags;
 
-	private ExtendedHashMap mTimer;
-	private ExtendedHashMap mTimerOld;
+	@State public ArrayList<String> mSelectedTags;
+	@State public ExtendedHashMap mTimer;
+	@State public ExtendedHashMap mTimerOld;
 
 	private EditText mName;
 	private EditText mDescription;
@@ -119,22 +118,22 @@ public class TimerEditFragment extends BaseHttpFragment implements MultiChoiceDi
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.timer_edit, container, false);
 
-		mName = (EditText) view.findViewById(R.id.EditTextTitle);
-		mDescription = (EditText) view.findViewById(R.id.EditTextDescription);
-		mEnabled = (CheckBox) view.findViewById(R.id.CheckBoxEnabled);
-		mZap = (CheckBox) view.findViewById(R.id.CheckBoxZap);
-		mAfterevent = (Spinner) view.findViewById(R.id.SpinnerAfterEvent);
-		mLocation = (Spinner) view.findViewById(R.id.SpinnerLocation);
-		mStartDate = (TextView) view.findViewById(R.id.TextViewBeginDate);
-		mStartTime = (TextView) view.findViewById(R.id.TextViewBeginTime);
-		mEndDate = (TextView) view.findViewById(R.id.TextViewEndDate);
-		mEndTime = (TextView) view.findViewById(R.id.TextViewEndTime);
-		mRepeatings = (TextView) view.findViewById(R.id.TextViewRepeated);
-		mService = (TextView) view.findViewById(R.id.TextViewService);
-		mTags = (TextView) view.findViewById(R.id.TextViewTags);
+		mName = view.findViewById(R.id.EditTextTitle);
+		mDescription = view.findViewById(R.id.EditTextDescription);
+		mEnabled = view.findViewById(R.id.CheckBoxEnabled);
+		mZap = view.findViewById(R.id.CheckBoxZap);
+		mAfterevent = view.findViewById(R.id.SpinnerAfterEvent);
+		mLocation = view.findViewById(R.id.SpinnerLocation);
+		mStartDate = view.findViewById(R.id.TextViewBeginDate);
+		mStartTime = view.findViewById(R.id.TextViewBeginTime);
+		mEndDate = view.findViewById(R.id.TextViewEndDate);
+		mEndTime = view.findViewById(R.id.TextViewEndTime);
+		mRepeatings = view.findViewById(R.id.TextViewRepeated);
+		mService = view.findViewById(R.id.TextViewService);
+		mTags = view.findViewById(R.id.TextViewTags);
 
 		// onClickListeners
 		registerOnClickListener(mService, Statics.ITEM_PICK_SERVICE);
@@ -171,13 +170,9 @@ public class TimerEditFragment extends BaseHttpFragment implements MultiChoiceDi
 		});
 
 		// Initialize if savedInstanceState won't and instance was not retained
-		if (savedInstanceState == null && mTimer == null && mTimerOld == null) {
-			HashMap<String, Object> map = (HashMap<String, Object>) getArguments().get(sData);
-			ExtendedHashMap data = new ExtendedHashMap();
-			data.putAll(map);
-
-			mTimer = new ExtendedHashMap();
-			mTimer.putAll((HashMap<String, Object>) data.get("timer"));
+		if (mTimer == null || mTimerOld == null) {
+			ExtendedHashMap data = ((ExtendedHashMap) getArguments().get(sData)).clone();
+			mTimer = ((ExtendedHashMap) data.get("timer")).clone();
 
 			if (Intent.ACTION_EDIT.equals(data.get("action"))) {
 				mTimerOld = mTimer.clone();
@@ -193,22 +188,10 @@ public class TimerEditFragment extends BaseHttpFragment implements MultiChoiceDi
 			} else {
 				reload();
 			}
-		} else if (savedInstanceState != null) {
-			mTimer = savedInstanceState.getParcelable("timer");
-			mTimerOld = savedInstanceState.getParcelable("timerOld");
-			mSelectedTags = new ArrayList<>(Arrays.asList(savedInstanceState.getStringArray("selectedTags")));
-			if (mTimer != null) {
-				reload();
-			}
 		} else {
 			reload();
 		}
-		registerFab(R.id.fab_main, R.string.save, R.drawable.ic_action_save, new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				onItemSelected(Statics.ITEM_SAVE);
-			}
-		});
+		registerFab(R.id.fab_main, R.string.save, R.drawable.ic_action_save, v -> onItemSelected(Statics.ITEM_SAVE));
 		return view;
 	}
 
@@ -221,8 +204,7 @@ public class TimerEditFragment extends BaseHttpFragment implements MultiChoiceDi
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == Statics.REQUEST_PICK_SERVICE) {
 			if (resultCode == Activity.RESULT_OK) {
-				ExtendedHashMap map = new ExtendedHashMap();
-				map.putAll((HashMap<String, Object>) data.getSerializableExtra(sData));
+				ExtendedHashMap map = (ExtendedHashMap) data.getSerializableExtra(sData);
 
 				mTimer.put(Timer.KEY_SERVICE_NAME, map.getString(Service.KEY_NAME));
 				mTimer.put(Timer.KEY_REFERENCE, map.getString(Service.KEY_REFERENCE));
@@ -233,24 +215,11 @@ public class TimerEditFragment extends BaseHttpFragment implements MultiChoiceDi
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
-		outState.putParcelable("timer", mTimer);
-		outState.putParcelable("timerOld", mTimerOld);
-
-		String[] selectedTags;
-		if (mSelectedTags != null) {
-			selectedTags = new String[mSelectedTags.size()];
-			mSelectedTags.toArray(selectedTags);
-		} else {
-			selectedTags = new String[0];
-		}
-		outState.putStringArray("selectedTags", selectedTags);
-
 		if (mProgress != null) {
 			if (mProgress.isShowing()) {
 				mProgress.dismiss();
 			}
 		}
-
 		super.onSaveInstanceState(outState);
 	}
 
@@ -280,12 +249,7 @@ public class TimerEditFragment extends BaseHttpFragment implements MultiChoiceDi
 	}
 
 	protected void registerOnClickListener(View v, final int id) {
-		v.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				onItemSelected(id);
-			}
-		});
+		v.setOnClickListener(v1 -> onItemSelected(id));
 	}
 
 	protected boolean onItemSelected(int id) {
@@ -309,48 +273,28 @@ public class TimerEditFragment extends BaseHttpFragment implements MultiChoiceDi
 
 			case Statics.ITEM_PICK_BEGIN_DATE:
 				calendar = getCalendar(mBegin);
-				DatePickerDialog datePickerDialogBegin = DatePickerDialog.newInstance(new OnDateSetListener() {
-					@Override
-					public void onDateSet(DatePickerDialog view, int year, int month, int day) {
-						TimerEditFragment.this.onDateSet(true, year, month, day);
-					}
-				}, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+				DatePickerDialog datePickerDialogBegin = DatePickerDialog.newInstance((view, year, month, day) -> TimerEditFragment.this.onDateSet(true, year, month, day), calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
 				getMultiPaneHandler().showDialogFragment(datePickerDialogBegin, "dialog_pick_begin_date");
 				consumed = true;
 				break;
 
 			case Statics.ITEM_PICK_BEGIN_TIME:
 				calendar = getCalendar(mBegin);
-				TimePickerDialog timePickerDialogBegin = TimePickerDialog.newInstance(new TimePickerDialog.OnTimeSetListener() {
-					@Override
-					public void onTimeSet(RadialPickerLayout view, int hour, int minute, int second) {
-						TimerEditFragment.this.onTimeSet(true, hour, minute);
-					}
-				}, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
+				TimePickerDialog timePickerDialogBegin = TimePickerDialog.newInstance((timePickerDialog, hour, minute, second) -> TimerEditFragment.this.onTimeSet(true, hour, minute), calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
 				getMultiPaneHandler().showDialogFragment(timePickerDialogBegin, "dialog_pick_begin_time");
 				consumed = true;
 				break;
 
 			case Statics.ITEM_PICK_END_DATE:
 				calendar = getCalendar(mEnd);
-				DatePickerDialog datePickerDialogEnd = DatePickerDialog.newInstance(new OnDateSetListener() {
-					@Override
-					public void onDateSet(DatePickerDialog view, int year, int month, int day) {
-						TimerEditFragment.this.onDateSet(false, year, month, day);
-					}
-				}, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+				DatePickerDialog datePickerDialogEnd = DatePickerDialog.newInstance((view, year, month, day) -> TimerEditFragment.this.onDateSet(false, year, month, day), calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
 				getMultiPaneHandler().showDialogFragment(datePickerDialogEnd, "dialog_pick_end_date");
 				consumed = true;
 				break;
 
 			case Statics.ITEM_PICK_END_TIME:
 				calendar = getCalendar(mEnd);
-				TimePickerDialog timePickerDialogEnd = TimePickerDialog.newInstance(new TimePickerDialog.OnTimeSetListener() {
-					@Override
-					public void onTimeSet(RadialPickerLayout view, int hour, int minute, int second) {
-						TimerEditFragment.this.onTimeSet(false, hour, minute);
-					}
-				}, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
+				TimePickerDialog timePickerDialogEnd = TimePickerDialog.newInstance((timePickerDialog, hour, minute, second) -> TimerEditFragment.this.onTimeSet(false, hour, minute), calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
 				getMultiPaneHandler().showDialogFragment(timePickerDialogEnd, "dialog_pick_end_time");
 				consumed = true;
 				break;
@@ -380,7 +324,7 @@ public class TimerEditFragment extends BaseHttpFragment implements MultiChoiceDi
 		intent.putExtra("fragmentClass", ServiceListFragment.class);
 		intent.putExtra("titleResource", R.string.service);
 		intent.putExtra("action", Intent.ACTION_PICK);
-		intent.putExtra("serializableData", (Serializable) data);
+		intent.putExtra("serializableData", data);
 		getActivity().startActivityForResult(intent, Statics.REQUEST_PICK_SERVICE);
 	}
 

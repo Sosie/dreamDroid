@@ -5,9 +5,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.v4.util.LongSparseArray;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.Adapter;
+import androidx.collection.LongSparseArray;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.Adapter;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.widget.Checkable;
@@ -84,11 +84,8 @@ public class ItemSelectionSupport {
 	 * @see #setChoiceMode(ChoiceMode)
 	 */
 	public boolean isItemChecked(int position) {
-		if (mChoiceMode != ChoiceMode.NONE && mCheckedStates != null) {
-			return mCheckedStates.get(position);
-		}
+		return mChoiceMode != ChoiceMode.NONE && mCheckedStates != null && mCheckedStates.get(position);
 
-		return false;
 	}
 
 	/**
@@ -133,7 +130,7 @@ public class ItemSelectionSupport {
 	 * @return A new array which contains the id of each checked item in the
 	 *         list.
 	 *
-	 * @see android.support.v7.widget.RecyclerView.Adapter#hasStableIds()
+	 * @see RecyclerView.Adapter#hasStableIds()
 	 */
 	public long[] getCheckedItemIds() {
 		if (mChoiceMode == ChoiceMode.NONE
@@ -220,7 +217,7 @@ public class ItemSelectionSupport {
 	public void setViewChecked(View view, boolean checked) {
 		if (view instanceof Checkable) {
 			((Checkable) view).setChecked(checked);
-		} else if (Build.VERSION.SDK_INT >= HONEYCOMB) {
+		} else {
 			view.setActivated(checked);
 		}
 	}

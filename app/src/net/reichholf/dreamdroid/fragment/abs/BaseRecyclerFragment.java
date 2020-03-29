@@ -2,14 +2,17 @@ package net.reichholf.dreamdroid.fragment.abs;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.ActionMode;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.livefront.bridge.Bridge;
+
+import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ActionMode;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -60,6 +63,7 @@ public abstract class BaseRecyclerFragment extends Fragment implements ActivityC
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Bridge.restoreInstanceState(this, savedInstanceState);
 		if (mHelper == null)
 			mHelper = new FragmentHelper(this);
 		else
@@ -70,12 +74,12 @@ public abstract class BaseRecyclerFragment extends Fragment implements ActivityC
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.card_recycler_content, container, false);
 	}
 
 	@Override
-	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 		RecyclerView rv = getRecyclerView();
 		rv.setLayoutManager(new GridLayoutManager(getActivity(), 1));
 		rv.addItemDecoration(new SpacesItemDecoration(getAppCompatActivity().getResources().getDimensionPixelSize(R.dimen.recylcerview_content_margin)));
@@ -89,7 +93,7 @@ public abstract class BaseRecyclerFragment extends Fragment implements ActivityC
 	}
 
 	protected void setFabEnabled(int id, boolean enabled) {
-		FloatingActionButton fab = (FloatingActionButton) getAppCompatActivity().findViewById(id);
+		FloatingActionButton fab = getAppCompatActivity().findViewById(id);
 		if (fab == null)
 			return;
 
@@ -106,7 +110,7 @@ public abstract class BaseRecyclerFragment extends Fragment implements ActivityC
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		//noinspection ConstantConditions
-		mSwipeRefreshLayout = (SwipeRefreshLayout) getView().findViewById(R.id.ptr_layout);
+		mSwipeRefreshLayout = getView().findViewById(R.id.ptr_layout);
 		mSwipeRefreshLayout.setOnRefreshListener(this);
 		mHelper.onActivityCreated(savedInstanceState);
 	}
@@ -124,9 +128,10 @@ public abstract class BaseRecyclerFragment extends Fragment implements ActivityC
 	}
 
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
+	public void onSaveInstanceState(@NonNull Bundle outState) {
 		mHelper.onSaveInstanceState(outState);
 		super.onSaveInstanceState(outState);
+		Bridge.saveInstanceState(this, outState);
 	}
 
 	@Override
@@ -211,7 +216,7 @@ public abstract class BaseRecyclerFragment extends Fragment implements ActivityC
 		View view = getView();
 		if(view == null)
 			return;
-		TextView textView = (TextView) view.findViewById(android.R.id.empty);
+		TextView textView = view.findViewById(android.R.id.empty);
 		if (textView == null)
 			return;
 		textView.setCompoundDrawablesWithIntrinsicBounds(0, topDrawable, 0, 0);
@@ -270,7 +275,7 @@ public abstract class BaseRecyclerFragment extends Fragment implements ActivityC
 	}
 
 	protected void registerFab(int id, int descriptionId, int backgroundResId, View.OnClickListener onClickListener, boolean topAligned) {
-		FloatingActionButton fab = (FloatingActionButton) getAppCompatActivity().findViewById(id);
+		FloatingActionButton fab = getAppCompatActivity().findViewById(id);
 		if (fab == null)
 			return;
 
@@ -279,12 +284,9 @@ public abstract class BaseRecyclerFragment extends Fragment implements ActivityC
 		fab.setContentDescription(getString(descriptionId));
 		fab.setImageResource(backgroundResId);
 		fab.setOnClickListener(onClickListener);
-		fab.setOnLongClickListener(new View.OnLongClickListener() {
-			@Override
-			public boolean onLongClick(View v) {
-				Toast.makeText(getAppCompatActivity(), v.getContentDescription(), Toast.LENGTH_SHORT).show();
-				return true;
-			}
+		fab.setOnLongClickListener(v -> {
+			Toast.makeText(getAppCompatActivity(), v.getContentDescription(), Toast.LENGTH_SHORT).show();
+			return true;
 		});
 	}
 

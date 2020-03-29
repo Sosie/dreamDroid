@@ -1,7 +1,8 @@
 package net.reichholf.dreamdroid.fragment;
 
 import android.os.Bundle;
-import android.support.v4.content.Loader;
+import androidx.annotation.NonNull;
+import androidx.loader.content.Loader;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,24 +37,14 @@ public class EpgTimelineFragment extends BaseHttpRecyclerEventFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.multiepg, null);
 
-		final EnhancedHorizontalScrollView headerScroll = (EnhancedHorizontalScrollView) v.findViewById(R.id.scrollview_header);
-		final EnhancedHorizontalScrollView contentScroll = (EnhancedHorizontalScrollView) v.findViewById(R.id.scrollview_content);
-		headerScroll.addScrollChangedListener(new EnhancedHorizontalScrollView.OnScrollChangedListener() {
-			@Override
-			public void onScrollChanged(int x, int y) {
-				contentScroll.scrollTo(x, y);
-			}
-		});
-		contentScroll.addScrollChangedListener(new EnhancedHorizontalScrollView.OnScrollChangedListener() {
-			@Override
-			public void onScrollChanged(int x, int y) {
-				headerScroll.scrollTo(x, y);
-			}
-		});
+		final EnhancedHorizontalScrollView headerScroll = v.findViewById(R.id.scrollview_header);
+		final EnhancedHorizontalScrollView contentScroll = v.findViewById(R.id.scrollview_content);
+		headerScroll.addScrollChangedListener((x, y) -> contentScroll.scrollTo(x, y));
+		contentScroll.addScrollChangedListener((x, y) -> headerScroll.scrollTo(x, y));
 
-		LinearLayout header = (LinearLayout) v.findViewById(R.id.header);
+		LinearLayout header = v.findViewById(R.id.header);
 		header.addView(createTimeLine(inflater));
-		LinearLayout content = (LinearLayout) v.findViewById(R.id.content);
+		LinearLayout content = v.findViewById(R.id.content);
 		for (int i = 0; i < 48; ++i) {
 			LinearLayout row = (LinearLayout) inflater.inflate(R.layout.multiepg_row, null);
 			for (int j = 0; j < 10; ++j) {
@@ -106,7 +97,7 @@ public class EpgTimelineFragment extends BaseHttpRecyclerEventFragment {
 		else
 			item = inflater.inflate(R.layout.multiepg_row_item, null);
 
-		TextView tv = (TextView) item.findViewById(android.R.id.text1);
+		TextView tv = item.findViewById(android.R.id.text1);
 		tv.setText(text1);
 		ViewGroup.LayoutParams params = tv.getLayoutParams();
 		params.width = width;
@@ -137,6 +128,7 @@ public class EpgTimelineFragment extends BaseHttpRecyclerEventFragment {
 		return params;
 	}
 
+	@NonNull
 	@Override
 	public Loader<LoaderResult<ArrayList<ExtendedHashMap>>> onCreateLoader(int id, Bundle args) {
 		return new AsyncListLoader(getAppCompatActivity(), new EventListRequestHandler(

@@ -9,20 +9,22 @@ package net.reichholf.dreamdroid.fragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.content.Loader;
+import androidx.annotation.NonNull;
+import androidx.loader.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.evernote.android.state.State;
+
 import net.reichholf.dreamdroid.R;
 import net.reichholf.dreamdroid.activities.abs.MultiPaneHandler;
 import net.reichholf.dreamdroid.fragment.abs.BaseHttpFragment;
-import net.reichholf.dreamdroid.fragment.dialogs.EpgDetailDialog;
+import net.reichholf.dreamdroid.fragment.dialogs.EpgDetailBottomSheet;
 import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
 import net.reichholf.dreamdroid.helpers.Statics;
 import net.reichholf.dreamdroid.helpers.enigma2.CurrentService;
@@ -37,7 +39,6 @@ import net.reichholf.dreamdroid.loader.AsyncSimpleLoader;
 import net.reichholf.dreamdroid.loader.LoaderResult;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Shows some information about the service currently running on TV
@@ -48,8 +49,6 @@ import java.util.HashMap;
 public class CurrentServiceFragment extends BaseHttpFragment {
 	@SuppressWarnings("unused")
 	private static final String LOG_TAG = "CurrentServiceFragment";
-
-	private ExtendedHashMap mCurrent;
 
 	private TextView mServiceName;
 	private TextView mProvider;
@@ -69,8 +68,10 @@ public class CurrentServiceFragment extends BaseHttpFragment {
 	private ExtendedHashMap mService;
 	private ExtendedHashMap mNow;
 	private ExtendedHashMap mNext;
-	private ExtendedHashMap mCurrentItem;
 	private boolean mCurrentServiceReady;
+
+	@State public ExtendedHashMap mCurrent;
+	@State public ExtendedHashMap mCurrentItem;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -79,33 +80,24 @@ public class CurrentServiceFragment extends BaseHttpFragment {
 		initTitles(getString(R.string.current_service));
 
 		mCurrentServiceReady = false;
-		if (savedInstanceState != null) {
-			// currents service data
-			HashMap<String, Object> current = savedInstanceState.getParcelable("current");
-			mCurrent = new ExtendedHashMap(current);
-			// currently selected item (now or next dialog)
-			HashMap<String, Object> currentItem = savedInstanceState
-					.getParcelable("currentItem");
-			mCurrentItem = new ExtendedHashMap(currentItem);
-		}
 	}
 
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.current_service, container, false);
 
-		mServiceName = (TextView) view.findViewById(R.id.service_name);
-		mProvider = (TextView) view.findViewById(R.id.provider);
-		mNowStart = (TextView) view.findViewById(R.id.event_now_start);
-		mNowTitle = (TextView) view.findViewById(R.id.event_now_title);
-		mNowDesc = (TextView) view.findViewById(R.id.event_now_desc);
-		mNowDuration = (TextView) view.findViewById(R.id.event_now_duration);
-		mNextStart = (TextView) view.findViewById(R.id.event_next_start);
-		mNextTitle = (TextView) view.findViewById(R.id.event_next_title);
-		mNextDesc = (TextView) view.findViewById(R.id.event_next_desc);
-		mNextDuration = (TextView) view.findViewById(R.id.event_next_duration);
-		mStream = (Button) view.findViewById(R.id.ButtonStream);
-		mNowLayout = (LinearLayout) view.findViewById(R.id.layout_now);
-		mNextLayout = (LinearLayout) view.findViewById(R.id.layout_next);
+		mServiceName = view.findViewById(R.id.service_name);
+		mProvider = view.findViewById(R.id.provider);
+		mNowStart = view.findViewById(R.id.event_now_start);
+		mNowTitle = view.findViewById(R.id.event_now_title);
+		mNowDesc = view.findViewById(R.id.event_now_desc);
+		mNowDuration = view.findViewById(R.id.event_now_duration);
+		mNextStart = view.findViewById(R.id.event_next_start);
+		mNextTitle = view.findViewById(R.id.event_next_title);
+		mNextDesc = view.findViewById(R.id.event_next_desc);
+		mNextDuration = view.findViewById(R.id.event_next_duration);
+		mStream = view.findViewById(R.id.ButtonStream);
+		mNowLayout = view.findViewById(R.id.layout_now);
+		mNextLayout = view.findViewById(R.id.layout_next);
 
 		registerOnClickListener(mNowLayout, Statics.ITEM_NOW);
 		registerOnClickListener(mNextLayout, Statics.ITEM_NEXT);
@@ -124,13 +116,6 @@ public class CurrentServiceFragment extends BaseHttpFragment {
 			applyData(0, mCurrent);
 	}
 
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		outState.putParcelable("currentItem", mCurrentItem);
-		outState.putParcelable("current", mCurrent);
-		super.onSaveInstanceState(outState);
-	}
-
 	/**
 	 * Register an <code>OnClickListener</code> for a view and a specific item
 	 * ID (<code>ITEM_*</code> statics)
@@ -142,12 +127,7 @@ public class CurrentServiceFragment extends BaseHttpFragment {
 	 *            statics)
 	 */
 	protected void registerOnClickListener(View v, final int id) {
-		v.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				onItemSelected(id);
-			}
-		});
+		v.setOnClickListener(v1 -> onItemSelected(id));
 	}
 
 	/**
@@ -186,8 +166,8 @@ public class CurrentServiceFragment extends BaseHttpFragment {
 		if (event != null) {
 			mCurrentItem = event;
 			Bundle args = new Bundle();
-			args.putParcelable("currentItem", mCurrentItem);
-			((MultiPaneHandler) getAppCompatActivity()).showDialogFragment(EpgDetailDialog.class, args,
+			args.putSerializable("currentItem", mCurrentItem);
+			((MultiPaneHandler) getAppCompatActivity()).showDialogFragment(EpgDetailBottomSheet.class, args,
 					"current_epg_detail_dialog");
 		}
 	}
@@ -221,7 +201,7 @@ public class CurrentServiceFragment extends BaseHttpFragment {
 			mNextDesc.setText(mNext.getString(Event.KEY_EVENT_DESCRIPTION_EXTENDED, ""));
 			mNextDuration.setText(mNext.getString(Event.KEY_EVENT_DURATION_READABLE));
 
-			ImageView piconView = (ImageView) getView().findViewById(R.id.picon);
+			ImageView piconView = getView().findViewById(R.id.picon);
 			Picon.setPiconForView(getAppCompatActivity(), piconView, mService, Statics.TAG_PICON);
 		} else {
 			showToast(getText(R.string.not_available));
@@ -292,6 +272,7 @@ public class CurrentServiceFragment extends BaseHttpFragment {
 		}
 	}
 
+	@NonNull
 	@Override
 	public Loader<LoaderResult<ExtendedHashMap>> onCreateLoader(int id, Bundle args) {
 		return new AsyncSimpleLoader(getAppCompatActivity(), new CurrentServiceRequestHandler(),

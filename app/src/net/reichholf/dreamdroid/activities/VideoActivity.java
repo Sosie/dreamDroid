@@ -1,45 +1,53 @@
 package net.reichholf.dreamdroid.activities;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AppCompatDelegate;
-import android.support.v7.preference.PreferenceManager;
-import android.support.v7.widget.Toolbar;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.FrameLayout;
 
 import net.reichholf.dreamdroid.DreamDroid;
 import net.reichholf.dreamdroid.R;
 import net.reichholf.dreamdroid.fragment.VideoOverlayFragment;
 import net.reichholf.dreamdroid.fragment.dialogs.ActionDialog;
 import net.reichholf.dreamdroid.video.VLCPlayer;
-import net.reichholf.dreamdroid.video.VideoPlayer;
-import net.reichholf.dreamdroid.video.VideoPlayerFactory;
 
-import org.piwik.sdk.PiwikApplication;
-import org.piwik.sdk.TrackHelper;
 import org.videolan.libvlc.IVLCVout;
+import org.videolan.libvlc.Media;
+import org.videolan.libvlc.MediaPlayer;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.preference.PreferenceManager;
 
 /**
  * Created by reichi on 16/02/16.
  */
 
 
-public class VideoActivity extends AppCompatActivity implements IVLCVout.Callback, ActionDialog.DialogActionListener {
+public class VideoActivity extends AppCompatActivity implements IVLCVout.OnNewVideoLayoutListener, IVLCVout.Callback, ActionDialog.DialogActionListener, MediaPlayer.EventListener {
 	public static final String TAG = VideoActivity.class.getSimpleName();
 
-	SurfaceView mVideoSurface;
-	SurfaceView mSubtitlesSurface;
-	VideoPlayer mPlayer;
+	FrameLayout mSurfaceFrame;
+	SurfaceView mSurfaceView;
+	SurfaceView mSubtitlesSurfaceView;
+	VLCPlayer mPlayer;
 	VideoOverlayFragment mOverlayFragment;
+
+	View.OnLayoutChangeListener mOnLayoutChangeListener;
+
+	int mCurrentScreenOrientation;
 
 	int mVideoWidth;
 	int mVideoHeight;
@@ -48,31 +56,48 @@ public class VideoActivity extends AppCompatActivity implements IVLCVout.Callbac
 	int mSarNum;
 	int mSarDen;
 
+	private final Handler mHandler = new Handler(Looper.getMainLooper());
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		getDelegate().setLocalNightMode(AppCompatDelegate.MODE_NIGHT_YES);
 		setFullScreen();
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.video_player);
-		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-		setSupportActionBar(toolbar);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setHomeButtonEnabled(true);
+		surfaceFrameAddLayoutListener(true);
+		mCurrentScreenOrientation = getResources().getConfiguration().orientation;
 		setTitle("");
 		initializeOverlay();
-		if (DreamDroid.isTrackingEnabled(this))
-			TrackHelper.track().screen("/" + getClass().getSimpleName()).title(getClass().getSimpleName()).with((PiwikApplication) getApplication());
-		getWindow().getDecorView().getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-			@Override
-			public void onGlobalLayout() {
-				setupVideoSurface();
-			}
-		});
 	}
+
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	private void surfaceFrameAddLayoutListener(boolean add) {
+		if (mSurfaceFrame == null || add == (mOnLayoutChangeListener != null)) return;
+		if (add) {
+			mOnLayoutChangeListener = new View.OnLayoutChangeListener() {
+				private final Runnable mRunnable = () -> changeSurfaceLayout();
+				@Override
+				public void onLayoutChange(View v, int left, int top, int right,
+										   int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+					if (left != oldLeft || top != oldTop || right != oldRight || bottom != oldBottom) {
+						/* changeSurfaceLayout need to be called after the layout changed */
+						mHandler.removeCallbacks(mRunnable);
+						mHandler.post(mRunnable);
+					}
+				}
+			};
+			mSurfaceFrame.addOnLayoutChangeListener(mOnLayoutChangeListener);
+			changeSurfaceLayout();
+		}
+		else {
+			mSurfaceFrame.removeOnLayoutChangeListener(mOnLayoutChangeListener);
+			mOnLayoutChangeListener = null;
+		}
+	}
+
 
 	@Override
 	protected void onStart() {
-		VideoPlayerFactory.init(this);
 		super.onStart();
 		initialize();
 	}
@@ -80,7 +105,7 @@ public class VideoActivity extends AppCompatActivity implements IVLCVout.Callbac
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mOverlayFragment.showOverlays(true);
+		mOverlayFragment.showOverlays();
 	}
 
 	@Override
@@ -99,8 +124,14 @@ public class VideoActivity extends AppCompatActivity implements IVLCVout.Callbac
 	@Override
 	protected void onStop() {
 		cleanup();
-		VideoPlayerFactory.deinit();
+		VLCPlayer.release();
+		surfaceFrameAddLayoutListener(false);
 		super.onStop();
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
 	}
 
 	@Override
@@ -117,11 +148,18 @@ public class VideoActivity extends AppCompatActivity implements IVLCVout.Callbac
 		handleIntent(intent);
 	}
 
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		mCurrentScreenOrientation = newConfig.orientation;
+		changeSurfaceLayout();
+	}
+
 	public void handleIntent(Intent intent) {
 		if(mPlayer == null)
 			return;
 		setIntent(intent);
-		if (intent.getAction() == Intent.ACTION_VIEW) {
+		if ( Intent.ACTION_VIEW.equals(intent.getAction()) ) {
 			int accel = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString(DreamDroid.PREFS_KEY_HWACCEL, Integer.toString(VLCPlayer.MEDIA_HWACCEL_ENABLED)));
 			mPlayer.playUri(intent.getData(), accel);
 		}
@@ -129,23 +167,22 @@ public class VideoActivity extends AppCompatActivity implements IVLCVout.Callbac
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if(!mOverlayFragment.onKeyDown(keyCode, event))
-			return super.onKeyDown(keyCode, event);
-		return true;
+		return mOverlayFragment.onKeyDown(keyCode, event) || super.onKeyDown(keyCode, event);
 	}
 
 	private void initialize() {
-		mVideoSurface = (SurfaceView) findViewById(R.id.video_surface);
-		mSubtitlesSurface = (SurfaceView) findViewById(R.id.subtitles_surface);
-		mSubtitlesSurface.setZOrderMediaOverlay(true);
-		mSubtitlesSurface.getHolder().setFormat(PixelFormat.TRANSLUCENT);
+		mSurfaceFrame = findViewById(R.id.player_surface_frame);
+		mSurfaceView = findViewById(R.id.player_surface);
+		mSubtitlesSurfaceView = findViewById(R.id.subtitles_surface);
+		mSubtitlesSurfaceView.setZOrderMediaOverlay(true);
+		mSubtitlesSurfaceView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
 
 		if (mPlayer == null)
-			mPlayer = VideoPlayerFactory.getInstance();
-		mPlayer.attach(mVideoSurface, mSubtitlesSurface);
+			mPlayer = VLCPlayer.get();
+		mPlayer.attach(this, mSurfaceView, mSubtitlesSurfaceView);
 
 		VLCPlayer.getMediaPlayer().getVLCVout().addCallback(this);
-		VLCPlayer.getMediaPlayer().setEventListener(mOverlayFragment);
+		VLCPlayer.getMediaPlayer().setEventListener(this);
 
 		handleIntent(getIntent());
 		setFullScreen();
@@ -171,45 +208,114 @@ public class VideoActivity extends AppCompatActivity implements IVLCVout.Callbac
 			return;
 		mPlayer.detach();
 		mPlayer = null;
-		mVideoSurface = null;
+		mSurfaceView = null;
 		VLCPlayer.getMediaPlayer().getVLCVout().removeCallback(this);
 		VLCPlayer.getMediaPlayer().setEventListener(null);
 	}
 
-	protected void setupVideoSurface() {
+	protected void changeSurfaceLayout() {
 		if(mPlayer == null)
 			return;
-		int surfaceWidth;
-		int surfaceHeight;
+		int sw;
+		int sh;
 
-		surfaceWidth = getWindow().getDecorView().getWidth();
-		surfaceHeight = getWindow().getDecorView().getHeight();
-		mPlayer.setWindowSize(surfaceWidth, surfaceHeight);
+		// get screen size
+		sw = getWindow().getDecorView().getWidth();
+		sh = getWindow().getDecorView().getHeight();
 
-		if (mSarDen == mSarNum) {
-			mSarDen = 1;
-			mSarNum = 1;
+		// getWindow().getDecorView() doesn't always take orientation into account, we have to correct the values
+		boolean isPortrait = mCurrentScreenOrientation == Configuration.ORIENTATION_PORTRAIT;
+
+		if (sw > sh && isPortrait || sw < sh && !isPortrait) {
+			int w = sw;
+			sw = sh;
+			sh = w;
 		}
 
-		double videoAspect, videoWith, displayAspect, displayWidth, displayHeight;
-		displayWidth = surfaceWidth;
-		displayHeight = surfaceHeight;
+		// sanity check
+		if (sw * sh == 0) {
+			Log.e(TAG, "Invalid surface size");
+			return;
+		}
+		MediaPlayer player = VLCPlayer.getMediaPlayer();
+		if (player != null) {
+			final IVLCVout vlcVout = player.getVLCVout();
+			vlcVout.setWindowSize(sw, sh);
+		}
 
-		videoWith = mVideoVisibleWidth * (double) mSarNum / mSarDen;
-		videoAspect = videoWith / (double) mVideoVisibleHeight;
-		displayAspect = displayWidth / displayHeight;
+		SurfaceView surface;
+		SurfaceView subtitlesSurface;
+		FrameLayout surfaceFrame;
+		surface = mSurfaceView;
+		subtitlesSurface = mSubtitlesSurfaceView;
+		surfaceFrame = mSurfaceFrame;
+		LayoutParams lp = surface.getLayoutParams();
 
-		if (displayAspect < videoAspect)
-			displayHeight = displayWidth / videoAspect;
+		if (mVideoWidth * mVideoHeight == 0) {
+			mVideoHeight = mPlayer.getVideoHeight();
+			mVideoWidth = mPlayer.getVideoWidth();
+			mVideoVisibleWidth = mVideoWidth;
+			mVideoVisibleHeight = mVideoHeight;
+		}
+
+
+		if (mVideoWidth * mVideoHeight == 0 || isInPictureInPictureMode()) {
+			/* Case of OpenGL vouts: handles the placement of the video using MediaPlayer API */
+			lp.width = LayoutParams.MATCH_PARENT;
+			lp.height = LayoutParams.MATCH_PARENT;
+			surface.setLayoutParams(lp);
+			lp = surfaceFrame.getLayoutParams();
+			lp.width = LayoutParams.MATCH_PARENT;
+			lp.height = LayoutParams.MATCH_PARENT;
+			surfaceFrame.setLayoutParams(lp);
+			if (player != null && mVideoWidth * mVideoHeight == 0) {
+				player.setAspectRatio(null);
+				player.setScale(0);
+			}
+			return;
+		}
+
+		if (player != null && lp.width == lp.height && lp.width == LayoutParams.MATCH_PARENT) {
+			/* We handle the placement of the video using Android View LayoutParams */
+			player.setAspectRatio(null);
+			player.setScale(0);
+		}
+
+		// compute the aspect ratio
+		double ar, vw;
+		if (mSarDen == mSarNum) {
+			/* No indication about the density, assuming 1:1 */
+			vw = mVideoVisibleWidth;
+			ar = (double) mVideoVisibleWidth / (double) mVideoVisibleHeight;
+		} else {
+			/* Use the specified aspect ratio */
+			vw = mVideoVisibleWidth * (double) mSarNum / mSarDen;
+			ar = vw / mVideoVisibleHeight;
+		}
+
+		double dw = sw, dh = sh;
+
+		// compute the display aspect ratio
+		double dar = dw / dh;
+		if (dar < ar)
+			dh = dw / ar;
 		else
-			displayWidth = displayHeight * videoAspect;
-		ViewGroup.LayoutParams layoutParams = mVideoSurface.getLayoutParams();
-		layoutParams.width = (int) Math.floor(displayWidth * mVideoWidth / mVideoVisibleWidth);
-		layoutParams.height = (int) Math.floor(displayHeight * mVideoHeight / mVideoVisibleHeight);
-		mVideoSurface.setLayoutParams(layoutParams);
-		mSubtitlesSurface.setLayoutParams(layoutParams);
-		mVideoSurface.invalidate();
-		mSubtitlesSurface.invalidate();
+			dw = dh * ar;
+
+		// set display size
+		lp.width = (int) Math.ceil(dw * mVideoWidth / mVideoVisibleWidth);
+		lp.height = (int) Math.ceil(dh * mVideoHeight / mVideoVisibleHeight);
+		surface.setLayoutParams(lp);
+		subtitlesSurface.setLayoutParams(lp);
+
+		// set frame size (crop if necessary)
+		lp = surfaceFrame.getLayoutParams();
+		lp.width = (int) Math.floor(dw);
+		lp.height = (int) Math.floor(dh);
+		surfaceFrame.setLayoutParams(lp);
+
+		surface.invalidate();
+		subtitlesSurface.invalidate();
 	}
 
 	public void setFullScreen() {
@@ -222,31 +328,37 @@ public class VideoActivity extends AppCompatActivity implements IVLCVout.Callbac
 	}
 
 	@Override
-	public void onNewLayout(IVLCVout vlcVout, int width, int height, int visibleWidth, int visibleHeight, int sarNum, int sarDen) {
+	public void onNewVideoLayout(IVLCVout vlcVout, int width, int height, int visibleWidth, int visibleHeight, int sarNum, int sarDen) {
 		mVideoWidth = width;
 		mVideoHeight = height;
 		mVideoVisibleWidth = visibleWidth;
 		mVideoVisibleHeight = visibleHeight;
 		mSarNum = sarNum;
 		mSarDen = sarDen;
-
-		setupVideoSurface();
+		changeSurfaceLayout();
 	}
 
 	@Override
 	public void onSurfacesCreated(IVLCVout vlcVout) {
-		//TODO onSurfacesCreated
+		MediaPlayer mediaPlayer = VLCPlayer.getMediaPlayer();
+		mediaPlayer.setAspectRatio(null);
+		mediaPlayer.setScale(0);
+		mediaPlayer.setVideoTrackEnabled(true);
+	}
+
+	@Override
+	public boolean isInPictureInPictureMode() {
+		return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && super.isInPictureInPictureMode();
+	}
+
+	@Override
+	public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
+		super.onPictureInPictureModeChanged(isInPictureInPictureMode);
+		changeSurfaceLayout();
 	}
 
 	@Override
 	public void onSurfacesDestroyed(IVLCVout vlcVout) {
-		//TODO onSurfacesDestroyed
-	}
-
-
-	@Override
-	public void onHardwareAccelerationError(IVLCVout vlcVout) {
-		//TODO onHardwareAccelerationError
 	}
 
 	@Override
@@ -260,5 +372,20 @@ public class VideoActivity extends AppCompatActivity implements IVLCVout.Callbac
 	public void finish() {
 		super.finish();
 		cleanup();
+	}
+
+	@Override
+	public void onEvent(MediaPlayer.Event event) {
+		mOverlayFragment.onUpdateButtons();
+		switch(event.type){
+			case MediaPlayer.Event.ESSelected:
+				if (event.getEsChangedType() == Media.VideoTrack.Type.Video)
+					changeSurfaceLayout();
+				break;
+			case MediaPlayer.Event.EndReached:
+			case MediaPlayer.Event.Stopped:
+				finish();
+		}
+		mOverlayFragment.onEvent(event);
 	}
 }

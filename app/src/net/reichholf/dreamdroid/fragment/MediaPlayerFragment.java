@@ -8,21 +8,22 @@ package net.reichholf.dreamdroid.fragment;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.content.Loader;
-import android.support.v4.widget.SlidingPaneLayout;
+import androidx.annotation.NonNull;
+import androidx.loader.content.Loader;
+import androidx.slidingpanelayout.widget.SlidingPaneLayout;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.evernote.android.state.State;
 import com.squareup.picasso.Picasso;
 
 import net.reichholf.dreamdroid.R;
@@ -56,8 +57,9 @@ public class MediaPlayerFragment extends AbstractHttpListFragment implements Act
 	public static int LOADER_PLAYLIST_ID = 1;
 	public static String PLAYLIST_AS_ROOT = "playlist";
 
+	@State public int mMediaIndex = -1;
+
 	private ExtendedHashMap mMedia;
-	private int mMediaIndex;
 	private SimpleChoiceDialog mChoice;
 	private ArrayList<NameValuePair> mFileListParams;
 	static int PLAY_MODE = 0;
@@ -78,80 +80,55 @@ public class MediaPlayerFragment extends AbstractHttpListFragment implements Act
 		// only if detail view is available the application should have
 		// listeners for the buttons
 		if (isDetailViewAvailable(v)) {
-			ImageButton togglePlaylistButton = (ImageButton) v.findViewById(R.id.toggle_playlist);
-			ListView playList = (ListView) v.findViewById(R.id.playlist);
-			playList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-				@Override
-				public void onItemClick(AdapterView<?> adapterView, View v, int position, long id) {
-					ExtendedHashMap item = mPlaylist.get(position);
-					playFile(item.getString(Mediaplayer.KEY_SERVICE_REFERENCE), PLAYLIST_AS_ROOT);
-				}
+			ImageButton togglePlaylistButton = v.findViewById(R.id.toggle_playlist);
+			ListView playList = v.findViewById(R.id.playlist);
+			playList.setOnItemClickListener((adapterView, v16, position, id) -> {
+				ExtendedHashMap item = mPlaylist.get(position);
+				playFile(item.getString(Mediaplayer.KEY_SERVICE_REFERENCE), PLAYLIST_AS_ROOT);
 			});
 
-			playList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-				@Override
-				public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-					ExtendedHashMap item = mPlaylist.get(position);
-					deleteFromPlaylist(item.getString(Mediaplayer.KEY_SERVICE_REFERENCE));
-					return true;
-				}
+			playList.setOnItemLongClickListener((parent, view, position, id) -> {
+				ExtendedHashMap item = mPlaylist.get(position);
+				deleteFromPlaylist(item.getString(Mediaplayer.KEY_SERVICE_REFERENCE));
+				return true;
 			});
 
-			togglePlaylistButton.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					ListView playList = (ListView) getView().findViewById(R.id.playlist);
-					ImageView cover = (ImageView) getView().findViewById(R.id.cover);
-					int vis = playList.getVisibility();
-					playList.setVisibility(cover.getVisibility());
-					cover.setVisibility(vis);
-				}
+			togglePlaylistButton.setOnClickListener(v15 -> {
+				ListView playList1 = getView().findViewById(R.id.playlist);
+				ImageView cover = getView().findViewById(R.id.cover);
+				int vis = playList1.getVisibility();
+				playList1.setVisibility(cover.getVisibility());
+				cover.setVisibility(vis);
 			});
 
-			ImageButton playButton = (ImageButton) v.findViewById(R.id.imageButtonPlay);
-			playButton.setOnClickListener(new View.OnClickListener() {
-				public void onClick(View v) {
-					play();
-				}
-			});
+			ImageButton playButton = v.findViewById(R.id.imageButtonPlay);
+			playButton.setOnClickListener(v14 -> play());
 
-			ImageButton stopButton = (ImageButton) v.findViewById(R.id.imageButtonStop);
-			stopButton.setOnClickListener(new View.OnClickListener() {
-				public void onClick(View v) {
-					stop();
-				}
-			});
+			ImageButton stopButton = v.findViewById(R.id.imageButtonStop);
+			stopButton.setOnClickListener(v13 -> stop());
 
-			ImageButton previousButton = (ImageButton) v.findViewById(R.id.imageButtonPrevious);
-			previousButton.setOnClickListener(new View.OnClickListener() {
-				public void onClick(View v) {
-					previous();
-				}
-			});
+			ImageButton previousButton = v.findViewById(R.id.imageButtonPrevious);
+			previousButton.setOnClickListener(v12 -> previous());
 
-			ImageButton nextbutton = (ImageButton) v.findViewById(R.id.imageButtonNext);
-			nextbutton.setOnClickListener(new View.OnClickListener() {
-				public void onClick(View v) {
-					next();
-				}
-			});
+			ImageButton nextbutton = v.findViewById(R.id.imageButtonNext);
+			nextbutton.setOnClickListener(v1 -> next());
 		}
 
-		SlidingPaneLayout spl = (SlidingPaneLayout) v.findViewById(R.id.sliding_pane);
+		SlidingPaneLayout spl = v.findViewById(R.id.sliding_pane);
 		if (spl != null) {
 			spl.setPanelSlideListener(new SlidingPaneLayout.PanelSlideListener() {
 				@Override
-				public void onPanelSlide(View view, float v) {
+				public void onPanelSlide(@NonNull View view, float v) {
 				}
 
 				@Override
-				public void onPanelOpened(View view) {
+				public void onPanelOpened(@NonNull View view) {
 					getListView().setEnabled(true);
 					getAppCompatActivity().supportInvalidateOptionsMenu();
 				}
 
 				@Override
-				public void onPanelClosed(View view) {
+				public void onPanelClosed(@NonNull View view) {
 					getListView().setEnabled(false);
 					getAppCompatActivity().supportInvalidateOptionsMenu();
 				}
@@ -172,10 +149,7 @@ public class MediaPlayerFragment extends AbstractHttpListFragment implements Act
 
 		mPlaylist = new ArrayList<>();
 		mMediaInfo = new ExtendedHashMap();
-		if (savedInstanceState != null) {
-			mMediaIndex = savedInstanceState.getInt(STATE_MEDIA_INDEX, -1);
-			if (mMediaIndex < 0)
-				return;
+		if (mMediaIndex >= 0) {
 			mMedia = mMapList.get(mMediaIndex);
 			String isDirectory = (String) mMedia.get(Mediaplayer.KEY_IS_DIRECTORY);
 			// only navigate into a directory
@@ -184,12 +158,6 @@ public class MediaPlayerFragment extends AbstractHttpListFragment implements Act
 				setArgs("path", mediaPath);
 			}
 		}
-	}
-
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		outState.putInt(STATE_MEDIA_INDEX, mMediaIndex);
-		super.onSaveInstanceState(outState);
 	}
 
 	@Override
@@ -275,14 +243,14 @@ public class MediaPlayerFragment extends AbstractHttpListFragment implements Act
 				setMediaInfo(mMediaInfo);
 
 				// add image to detail view
-				ImageView imageView = (ImageView) getView().findViewById(R.id.cover);
+				ImageView imageView = getView().findViewById(R.id.cover);
 
 				ArrayList<NameValuePair> params = new ArrayList<>();
 				params.add(new NameValuePair("file", "/tmp/.id3coverart"));
 				String imageUrl = getHttpClient().buildUrl("/file?", params);
 				// String imageUrl =
 				// "http://192.168.2.100/file?file=/tmp/.id3coverart";
-				Picasso.with(getContext()).load(imageUrl).fit().centerInside().into(imageView);
+				Picasso.get().load(imageUrl).fit().centerInside().into(imageView);
 			}
 
 			// check for changes in options menu
@@ -432,11 +400,11 @@ public class MediaPlayerFragment extends AbstractHttpListFragment implements Act
 	}
 
 	public void clearMediaInfo() {
-		TextView artist = (TextView) getView().findViewById(R.id.artist);
+		TextView artist = getView().findViewById(R.id.artist);
 		// TextView album = (TextView) getView().findViewById(R.id.album);
 		// TextView year = (TextView) getView().findViewById(R.id.year);
 		// TextView category = (TextView) getView().findViewById(R.id.category);
-		TextView title = (TextView) getView().findViewById(R.id.title);
+		TextView title = getView().findViewById(R.id.title);
 
 		artist.setText("-");
 		// album.setText("-");
@@ -446,8 +414,8 @@ public class MediaPlayerFragment extends AbstractHttpListFragment implements Act
 	}
 
 	public void setMediaInfo(ExtendedHashMap map) {
-		TextView artist = (TextView) getView().findViewById(R.id.artist);
-		TextView title = (TextView) getView().findViewById(R.id.title);
+		TextView artist = getView().findViewById(R.id.artist);
+		TextView title = getView().findViewById(R.id.title);
 		// TextView album = (TextView) getView().findViewById(R.id.album);
 		// TextView year = (TextView) getView().findViewById(R.id.year);
 		// TextView category = (TextView) getView().findViewById(R.id.category);
@@ -547,7 +515,7 @@ public class MediaPlayerFragment extends AbstractHttpListFragment implements Act
 		execSimpleResultTask(new MediaplayerCommandRequestHandler(URIStore.MEDIA_PLAYER_CMD), params);
 
 		clearMediaInfo();
-		ImageView imageView = (ImageView) getView().findViewById(R.id.cover);
+		ImageView imageView = getView().findViewById(R.id.cover);
 		imageView.setImageResource(R.drawable.no_cover_art);
 	}
 
@@ -600,7 +568,7 @@ public class MediaPlayerFragment extends AbstractHttpListFragment implements Act
 		setListAdapter(mAdapter);
 
 		mPlaylistAdapter = new MediaListAdapter(getAppCompatActivity(), mPlaylist);
-		ListView playlistView = (ListView) v.findViewById(R.id.playlist);
+		ListView playlistView = v.findViewById(R.id.playlist);
 		playlistView.setAdapter(mPlaylistAdapter);
 	}
 
@@ -608,7 +576,7 @@ public class MediaPlayerFragment extends AbstractHttpListFragment implements Act
 	 * Check if DetailView is available for current device
 	 */
 	private boolean isDetailViewAvailable(View v) {
-		LinearLayout detailLayout = (LinearLayout) v.findViewById(R.id.detailView);
+		LinearLayout detailLayout = v.findViewById(R.id.detailView);
 
 		return detailLayout != null;
 	}
@@ -648,13 +616,13 @@ public class MediaPlayerFragment extends AbstractHttpListFragment implements Act
 					|| command.equals(MediaplayerCommandRequestHandler.CMD_PLAY)
 					|| command.equals(MediaplayerCommandRequestHandler.CMD_PREVIOUS)) {
 				// add image to detail view
-				ImageView imageView = (ImageView) getView().findViewById(R.id.cover);
+				ImageView imageView = getView().findViewById(R.id.cover);
 
 				ArrayList<NameValuePair> params = new ArrayList<>();
 				params.add(new NameValuePair("file", "/tmp/.id3coverart"));
 
 				String imageUrl = getHttpClient().buildUrl("/file?", params);
-				Picasso.with(getContext()).load(imageUrl).fit().centerInside().into(imageView);
+				Picasso.get().load(imageUrl).fit().centerInside().into(imageView);
 
 				getCurrentMediaInfo();
 			}
@@ -665,6 +633,7 @@ public class MediaPlayerFragment extends AbstractHttpListFragment implements Act
 		}
 	}
 
+	@NonNull
 	@Override
 	public Loader<LoaderResult<ArrayList<ExtendedHashMap>>> onCreateLoader(int id, Bundle args) {
 		return new AsyncListLoader(getAppCompatActivity(), new MediaplayerListRequestHandler(), false, args);

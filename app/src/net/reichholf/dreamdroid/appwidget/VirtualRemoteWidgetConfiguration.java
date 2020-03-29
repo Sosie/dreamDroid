@@ -16,6 +16,7 @@ import android.widget.Toast;
 import net.reichholf.dreamdroid.DatabaseHelper;
 import net.reichholf.dreamdroid.Profile;
 import net.reichholf.dreamdroid.R;
+import net.reichholf.dreamdroid.adapter.recyclerview.SimpleExtendedHashMapAdapter;
 import net.reichholf.dreamdroid.helpers.ExtendedHashMap;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ import java.util.ArrayList;
 public class VirtualRemoteWidgetConfiguration extends ListActivity {
 	private ArrayList<ExtendedHashMap> mProfileMapList;
 	private ArrayList<Profile> mProfiles;
-	private SimpleAdapter mAdapter;
+	private SimpleExtendedHashMapAdapter mAdapter;
 	private int mAppWidgetId;
 
 	@Override
@@ -59,7 +60,7 @@ public class VirtualRemoteWidgetConfiguration extends ListActivity {
 				mProfileMapList.add(map);
 			}
 
-			mAdapter = new SimpleAdapter(this, mProfileMapList, android.R.layout.two_line_list_item, new String[]{
+			mAdapter = new SimpleExtendedHashMapAdapter(this, mProfileMapList, android.R.layout.two_line_list_item, new String[]{
 					DatabaseHelper.KEY_PROFILE_PROFILE, DatabaseHelper.KEY_PROFILE_HOST}, new int[]{android.R.id.text1,
 					android.R.id.text2});
 			setListAdapter(mAdapter);
@@ -80,16 +81,15 @@ public class VirtualRemoteWidgetConfiguration extends ListActivity {
 	}
 
 	public void finish(int profileId, boolean isQuickZap) {
-		Intent data = new Intent();
-		data.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
-		setResult(RESULT_OK, data);
 		saveWidgetConfiguration(profileId, !isQuickZap);
-
 		Context context = getApplicationContext();
 		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
 		Profile profile = getWidgetProfile(context, mAppWidgetId);
 		VirtualRemoteWidgetProvider.updateWidget(context, appWidgetManager, mAppWidgetId, profile);
 
+		Intent data = new Intent();
+		data.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+		setResult(RESULT_OK, data);
 		finish();
 	}
 
@@ -98,7 +98,7 @@ public class VirtualRemoteWidgetConfiguration extends ListActivity {
 		SharedPreferences.Editor editor = prefs.edit();
 		editor.putInt(getProfileIdKey(mAppWidgetId), profileId);
 		editor.putBoolean(getIsFullKey(mAppWidgetId), isFull);
-		editor.commit();
+		editor.apply();
 	}
 
 	public void showToast(String text) {
@@ -129,7 +129,7 @@ public class VirtualRemoteWidgetConfiguration extends ListActivity {
 		if (prefs.contains(getProfileIdKey(appWidgetId))) {
 			SharedPreferences.Editor editor = prefs.edit();
 			editor.remove(getProfileIdKey(appWidgetId));
-			editor.commit();
+			editor.apply();
 		}
 	}
 }

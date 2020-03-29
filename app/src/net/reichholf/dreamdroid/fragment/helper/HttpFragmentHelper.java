@@ -10,11 +10,11 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.loader.app.LoaderManager.LoaderCallbacks;
+import androidx.core.content.ContextCompat;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
@@ -76,7 +76,7 @@ public class HttpFragmentHelper implements SimpleResultTask.SimpleResultTaskHand
     }
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.ptr_layout);
+        mSwipeRefreshLayout = view.findViewById(R.id.ptr_layout);
         if (mSwipeRefreshLayout != null) {
             // Now setup the SwipeRefreshLayout
             mSwipeRefreshLayout.setOnRefreshListener((SwipeRefreshLayout.OnRefreshListener) mFragment);
@@ -89,7 +89,7 @@ public class HttpFragmentHelper implements SimpleResultTask.SimpleResultTaskHand
 
         Context ctx = getAppCompatActivity();
         TypedValue typed_value = new TypedValue();
-        ctx.getTheme().resolveAttribute(android.support.v7.appcompat.R.attr.actionBarSize, typed_value, true);
+        ctx.getTheme().resolveAttribute(androidx.appcompat.R.attr.actionBarSize, typed_value, true);
         mSwipeRefreshLayout.setProgressViewOffset(false, 0, getAppCompatActivity().getResources().getDimensionPixelSize(typed_value.resourceId));
 
         ctx.getTheme().resolveAttribute(R.attr.colorAccent, typed_value, true);

@@ -115,6 +115,14 @@ public class DateTime {
 	 * @param timestamp
 	 * @return
 	 */
+	public static String getYearDateTimeString(long timestamp) {
+		return getYearDateTimeString(String.valueOf(timestamp));
+	}
+
+	/**
+	 * @param timestamp
+	 * @return
+	 */
 	public static String getYearDateTimeString(String timestamp) {
 		SimpleDateFormat sdfDateTime;
 
@@ -169,6 +177,12 @@ public class DateTime {
 
 	public static Integer parseTimestamp(String timestamp){
 		return (new BigDecimal(timestamp)).intValue();
+	}
+
+	public static String minutesAndSeconds(int seconds) {
+		int min = seconds / 60;
+		int sec = seconds % 60;
+		return String.format("%02d:%02d", min, sec);
 	}
 
 	public static int getPrimeTimestamp(){

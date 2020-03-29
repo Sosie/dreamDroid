@@ -8,7 +8,7 @@ package net.reichholf.dreamdroid.helpers.enigma2;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 
 import net.reichholf.dreamdroid.DreamDroid;
 import net.reichholf.dreamdroid.R;
@@ -243,7 +243,7 @@ public class Timer {
 		intent.putExtra("fragmentClass", TimerEditFragment.class);
 		intent.putExtra("titleResource", create ? R.string.new_timer : R.string.edit_timer);
 		//intent.putExtra("menuResource", R.menu.save);
-		intent.putExtra("serializableData", (Serializable) data);
+		intent.putExtra("serializableData", data);
 		target.getActivity().startActivityForResult(intent, Statics.REQUEST_EDIT_TIMER);
 	}
 }
